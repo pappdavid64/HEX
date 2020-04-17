@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import unideb.diploma.App;
+import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
 import unideb.diploma.domain.Position;
@@ -64,7 +65,6 @@ public class State {
 	
 	public boolean isEndState(FieldColor lastPlayer) {
 		List<Position> checkedIndexes = new ArrayList<>();
-//		FieldColor lastPlayer = (color == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE;
 		boolean hasPath = false;
 		for(int i = 0; i < App.BOARD_SIZE; i++) {
 			if(lastPlayer == FieldColor.BLUE) {
@@ -122,7 +122,70 @@ public class State {
 				);
 	}
 	
+	public int getLongestPathLength(int x, int y, FieldColor playerColor, List<Position> checkedIndexes) {
+		if(x < 0 || x > App.BOARD_SIZE - 1) {
+			return 0;
+		}
+		if(y < 0 || y > App.BOARD_SIZE - 1) {
+			return 0;
+		}
+		
+		Position index = new Position(x, y);
+		FieldColor fieldColor = table.getFieldAt(index).getColor();
+		
+		//This check has to be here to ensure that the following two work properly 
+		
+		if(fieldColor != playerColor) {
+			checkedIndexes.add(index);
+			return 0;
+		}
+		
+		if(checkedIndexes.contains(index)) {
+			return 0;
+		}
+		
+		int plus = 1;
+		for(Position position : checkedIndexes) {
+			if(playerColor == FieldColor.BLUE && table.getFieldAt(position).getColor() == FieldColor.BLUE) {
+				if(position.getY() == index.getY()) {
+					plus = 0;
+				}
+			} 
+			if(playerColor == FieldColor.RED && table.getFieldAt(position).getColor() == FieldColor.RED) {
+				if(position.getX() == index.getX()) {
+					plus = 0;
+				}
+			}
+		}
+		
+		checkedIndexes.add(index);
+		
+		if(playerColor == fieldColor){
+			return 	(
+					getLongestPathLength(x-1, y, playerColor, checkedIndexes) +
+					getLongestPathLength(x-1, y+1, playerColor, checkedIndexes) +
+					getLongestPathLength(x, y+1, playerColor, checkedIndexes) +
+					getLongestPathLength(x+1, y, playerColor, checkedIndexes) +
+					getLongestPathLength(x+1, y-1, playerColor, checkedIndexes) +
+					getLongestPathLength(x, y-1, playerColor, checkedIndexes)
+					) + plus;
+		}
+		
+		return 0;
+	}
+	
 	public State clone() {
 		return new State(table.clone(), color);
+	}
+
+	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields) {
+		List<Field> neighbours = Cache.getNeighbours(field);
+		for(Field neighbour : neighbours) {
+			if(table.getFieldAt(neighbour.getPosition()).getColor() == color && !reachableFields.contains(neighbour)) {
+				reachableFields.add(neighbour);
+				return getReachableFieldsFrom(neighbour, reachableFields);
+			}
+		}
+		return reachableFields;
 	}
 }

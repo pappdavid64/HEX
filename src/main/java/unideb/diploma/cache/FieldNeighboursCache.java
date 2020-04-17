@@ -140,7 +140,6 @@ public class FieldNeighboursCache {
 		}
 		neighbours = new ArrayList<>( new HashSet<>(neighbours));
 		neighbours.remove(field);
-//		System.out.println(neighbours.size());
 		return neighbours;
 	}
 	

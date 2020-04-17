@@ -50,7 +50,7 @@ public class AppConfig {
 	@Bean(name="playerTwo")
 	public Player playerTwo() {
 		AIPlayer ai = new AIPlayer("AI player two", FieldColor.RED);
-		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), fieldValueStrategy(), randomStrategy(), blockingStrategy(ai,3), winningStrategy(ai,2)});
+		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), fieldValueStrategy(), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
 		return ai;
 	}
 	
@@ -59,6 +59,12 @@ public class AppConfig {
 		AIPlayer ai = new AIPlayer("AI player three", FieldColor.BLUE);
 		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,3), winningStrategy(ai,2)});
 		return ai;
+	}
+	
+	@Bean(name="playerFour")
+	public Player playerFour() {
+		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.RED);
+		return humanPlayer;
 	}
 	
 	public Strategy bridgeStrategy(Player player) {
@@ -91,6 +97,7 @@ public class AppConfig {
 		Cache.registerPlayer(playerOne());
 		Cache.registerPlayer(playerTwo());
 		Cache.registerPlayer(playerThree());
+		Cache.registerPlayer(playerFour());
 		return new App(service(), view(), playerOne(), playerTwo(), NUMBER_OF_ROUNDS);
 	}
 }

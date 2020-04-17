@@ -83,6 +83,7 @@ public class Cache {
 	}
 	
 	public static List<VirtualConnection> getVirtualConnectionsOf(Player player){
+		removeVirtualConnectionsWithZeroField(player);
 		return virtualConnnectionCache.getVirtualConnectionsOf(player);
 	}
 	
@@ -203,6 +204,15 @@ public class Cache {
 		return fieldNeighboursCache;
 	}
 
+	private static void removeVirtualConnectionsWithZeroField(Player player) {
+		List<VirtualConnection> zeroFildedConnections = new ArrayList<>();
+		for(VirtualConnection connection : virtualConnnectionCache.getVirtualConnectionsOf(player)) {
+			if(connection.getConnections().isEmpty()) {
+				zeroFildedConnections.add(connection);
+			}
+		}
+		virtualConnnectionCache.removeVirtualConnections(player, zeroFildedConnections);
+	}
 	
 	private Cache() {}
 }

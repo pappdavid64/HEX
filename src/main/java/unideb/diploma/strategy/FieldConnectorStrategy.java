@@ -1,19 +1,26 @@
 package unideb.diploma.strategy;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import unideb.diploma.App;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
+import unideb.diploma.domain.FieldColor;
+import unideb.diploma.domain.Position;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.connection.VirtualConnection;
+import unideb.diploma.strategy.strength.StrategyStrength;
 
 public class FieldConnectorStrategy implements Strategy {
 
 	private Player player;
 	private boolean active;
+	private int longestWayLength;
+	private Operator nextMove;
 	
 	public FieldConnectorStrategy(Player player) {
 		this.player = player;
@@ -22,9 +29,8 @@ public class FieldConnectorStrategy implements Strategy {
 	
 	@Override
 	public Operator getNextMove(State state) {
-		Operator nextMove = null;
 		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-			if(connection.getConnectionsCount() == 1) {
+			if(connection.getConnectionsCount() == 1 && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
 				nextMove = Cache.getOperatorAt(connection.getConnections().get(0).getPosition());
 				Cache.removeVirtualConnection(player, connection);
 				break;
@@ -40,13 +46,42 @@ public class FieldConnectorStrategy implements Strategy {
 	}
 
 	@Override
-	public int getGoodnessByState(State state) {
+	public StrategyStrength getGoodnessByState(State state) {
 		boolean canEnd = (canEndFromVirtualConnections(state.clone()));
-		return (canEnd) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+		return (virtualConnectionWithOneFieldMakesThePathLonger(state.clone()) || canEnd) ? StrategyStrength.strong(longestWayLength) : StrategyStrength.weak(1);
 	}
 
 	
 	
+	private boolean virtualConnectionWithOneFieldMakesThePathLonger(State state) {
+		List<Position> checkedIndexes = new ArrayList<>();
+		for(int i = 0; i < App.BOARD_SIZE; i++) {
+			for(int j = 0; j < App.BOARD_SIZE; j++) {
+				int actualLength = state.getLongestPathLength(i, j, player.getColor(), checkedIndexes);
+				if(longestWayLength < actualLength) {
+					longestWayLength = actualLength;
+				}
+			}
+		}
+		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
+			int actualLenght;
+			if(connection.getConnectionsCount() == 1) {
+				Position position = connection.getConnections().get(0).getPosition();
+				State actualState = state.clone();
+				actualState.applyOperator(Cache.getOperatorAt(position));
+				actualLenght = actualState.getLongestPathLength(position.getX(), position.getY(), player.getColor(), new ArrayList<>());
+				System.out.println("longest: " + longestWayLength + ", actual: " + actualLenght);
+				if(actualLenght > longestWayLength) {
+					longestWayLength = actualLenght;
+					nextMove = Cache.getOperatorAt(position);
+					return true;
+				}
+			}
+		}
+		nextMove = null;
+		return false;
+	}
+
 	private boolean canEndFromVirtualConnections(State state) {
 		List<VirtualConnection> connections = Cache.getVirtualConnectionsOf(player);
 		for(VirtualConnection connection : connections) {
@@ -60,6 +95,29 @@ public class FieldConnectorStrategy implements Strategy {
 		return false;
 	}
 
+	private boolean canReachAnotherFieldIntheLineFromVirtualConnection(State state, VirtualConnection connection) {
+		List<Field> reachableFields = new ArrayList<>();
+		Field field = connection.getConnections().get(0);
+		List<Field> neighbours = Cache.getNeighbours(field);
+		for(Field actual : neighbours) {
+			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
+			System.out.println("reachable fields: " + reachableFields);
+			for(Field reachableField : reachableFields) {
+				if(player.getColor() == FieldColor.RED) {
+					if(reachableField.getX() == field.getX()) {
+						return true;
+					}
+				}
+				if(player.getColor() == FieldColor.BLUE) {
+					if(reachableField.getY() == field.getY()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean isActive() {
 		return active;
@@ -73,5 +131,11 @@ public class FieldConnectorStrategy implements Strategy {
 	@Override
 	public void activate() {
 		active = true;		
+	}
+
+	@Override
+	public void reCalculate(State state) {
+		// TODO Auto-generated method stub
+		
 	}
 }

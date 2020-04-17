@@ -52,6 +52,7 @@ public class App{
     			view.printWinner(playerOne);
     			statistic.addWinToPlayer(playerOne);
     			System.out.println("--------------------------------------------");
+    			sleep(3000);
     			Cache.resetBaseState();
     			SpringApp.setStage();
     			break;
@@ -61,6 +62,7 @@ public class App{
     			view.printWinner(playerTwo);
     			statistic.addWinToPlayer(playerTwo);
     			System.out.println("--------------------------------------------");
+    			sleep(3000);
     			Cache.resetBaseState();
     			SpringApp.setStage();
     			break;
@@ -68,6 +70,15 @@ public class App{
     	}
     }
 
+    private void sleep(int millis) {
+    	try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     public Table getTable() {
     	return state.getTable();
     }

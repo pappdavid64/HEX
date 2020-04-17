@@ -3,13 +3,14 @@ package unideb.diploma.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import unideb.diploma.App;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
-import unideb.diploma.strategy.connection.VirtualConnection;
+import unideb.diploma.strategy.strength.StrategyStrength;
 
 public class WinningStrategy implements Strategy {
 
@@ -17,6 +18,7 @@ public class WinningStrategy implements Strategy {
 	private Player player;
 	private Field selected;
 	private int depth;
+	private int numberOfTurns;
 	
 	public WinningStrategy(Player player, int depth) {
 		this.player = player;
@@ -25,25 +27,19 @@ public class WinningStrategy implements Strategy {
 	
 	@Override
 	public Operator getNextMove(State state) {
-		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-			if(connection.getConnectionsCount() == 1) {
-				selected = connection.getConnections().get(0);
-				Cache.removeVirtualConnection(player, connection);
-				break;
-			}
-		}
 		return Cache.getOperatorAt(selected.getPosition());
 	}
 
 	@Override
-	public int getGoodnessByState(State state) {
+	public StrategyStrength getGoodnessByState(State state) {
 		boolean couldEnd = (couldEndInXTurns(state, depth));
-		return  couldEnd ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+		return  couldEnd ? StrategyStrength.veryStrong(App.BOARD_SIZE - numberOfTurns) : StrategyStrength.veryWeak(0);
 	}
 
 	private boolean couldEndInXTurns(State state, int x) {
 		for(int i = 0; i < x; i++) {
 			if(couldEndInXTurns(Cache.getUseableOperators(), state.clone(), i+1)) {
+				numberOfTurns = i;
 				return true;
 			}
 
@@ -84,6 +80,12 @@ public class WinningStrategy implements Strategy {
 	@Override
 	public void activate() {
 		active = true;
+	}
+
+	@Override
+	public void reCalculate(State state) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

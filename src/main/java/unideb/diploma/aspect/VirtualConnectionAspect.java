@@ -32,19 +32,11 @@ public class VirtualConnectionAspect {
 		        for(VirtualConnection connection : Cache.getVirtualConnectionsOf(playerOne)) {
 		        	if(connection.getConnections().contains(searchedField)) {
 		        		connection.getConnections().remove(searchedField);
-		        		if(connection.getConnectionsCount() == 0) {
-		        			Cache.removeVirtualConnection(playerOne, connection);
-		        			break;
-		        		}
 		        	}			
 	        	}
 		        for(VirtualConnection connection : Cache.getVirtualConnectionsOf(playerTwo)) {
 		        	if(connection.getConnections().contains(searchedField)) {
 		        		connection.getConnections().remove(searchedField);
-		        		if(connection.getConnectionsCount() == 0) {
-		        			Cache.removeVirtualConnection(playerTwo, connection);
-		        			break;
-		        		}
 		        	}			
 				}
 			}

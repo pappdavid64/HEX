@@ -9,6 +9,7 @@ import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
+import unideb.diploma.strategy.strength.StrategyStrength;
 
 public class FieldValueStrategy implements Strategy{
 
@@ -22,8 +23,8 @@ public class FieldValueStrategy implements Strategy{
 	}
 
 	@Override
-	public int getGoodnessByState(State state) {
-		return getBestValueOfFields(state).getGoodness();
+	public StrategyStrength getGoodnessByState(State state) {
+		return StrategyStrength.weak(getBestValueOfFields(state).getGoodness());
 	}
 	
 	private Field getBestValueOfFields(State state) {
@@ -56,5 +57,11 @@ public class FieldValueStrategy implements Strategy{
 	@Override
 	public void activate() {
 		active = true;		
+	}
+
+	@Override
+	public void reCalculate(State state) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import unideb.diploma.domain.Field;
+import unideb.diploma.domain.Position;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.connection.VirtualConnection;
+import unideb.diploma.strategy.connection.VirtualField;
 
 public class VirtualConnectionCache {
 	private List<Map> playersVirtualConnection;
@@ -33,6 +35,12 @@ public class VirtualConnectionCache {
 		search(player).removeVirtualConnection(connection);
 	}
 	
+	void removeVirtualConnections(Player player, List<VirtualConnection> connections) {
+		for(VirtualConnection connection : connections) {
+			search(player).removeVirtualConnection(connection);
+		}
+	}
+	
 	List<VirtualConnection> getVirtualConnectionsOf(Player player){
 		return (search(player).getConnections() == null) ? new ArrayList<>() : search(player).getConnections();
 	}
@@ -45,6 +53,11 @@ public class VirtualConnectionCache {
 				VirtualConnection virtualConnection = new VirtualConnection(field, neighbour);
 				if(virtualConnection.getConnectionsCount() != 0) {
 					virtualConnections.add(virtualConnection);
+				}
+			}
+			for(Direction direction : player.getDirections()) {
+				if(isOneFieldAwayFromEnd(field, direction)) {
+					virtualConnections.add(new VirtualConnection(field, getVirtualField(field, direction)));
 				}
 			}
 		}
@@ -66,7 +79,31 @@ public class VirtualConnectionCache {
 		return null;
 	}
 	
+	private VirtualField getVirtualField(Field selectedField, Direction direction) {
+		VirtualField virtual = null;
+		Position position = selectedField.getPosition();
+		switch (direction) {
+			case EAST:
+				virtual = new VirtualField(position.getX() - 1, position.getY() + 2);
+				break;
+			case WEST:
+				virtual = new VirtualField(position.getX() + 1, position.getY() - 2);
+				break;
+			case NORTH:
+				virtual = new VirtualField(position.getX() - 2, position.getY() + 1);
+				break;
+			case SOUTH:
+				virtual = new VirtualField(position.getX() + 2, position.getY() - 1);
+				break;
+			default:
+				break;
+		}
+		return virtual;
+	}
 	
+	private boolean isOneFieldAwayFromEnd(Field selectedField, Direction direction) {
+		return Cache.getNeighboursOfLevelByDirection(direction, selectedField, 1).isEmpty();
+	}
 	
 	private static class Map {
 		Player player;
