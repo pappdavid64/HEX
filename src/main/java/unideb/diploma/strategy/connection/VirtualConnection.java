@@ -14,8 +14,15 @@ import unideb.diploma.domain.Table;
 public class VirtualConnection {
 
 	private List<Field> connections;
+	private Field a;
+	private Field b;
+	private VirtualField virtual;
+	private boolean hasVirtualField;
 	
 	public VirtualConnection(Field a, Field b) {
+		this.a = a;
+		this.b = b;
+		hasVirtualField = false;
 		if(distanceIsOneField(a, b)) {
 			connections = getConnectionsBetween(a,b);
 		} else {
@@ -24,6 +31,9 @@ public class VirtualConnection {
 	}
 	
 	public VirtualConnection(Field real, VirtualField virtual) {
+		this.a = real;
+		this.virtual = virtual;
+		hasVirtualField = true;
 		List<Field> neighboursOfReal = Cache.getNeighbours(real);
 		List<Field> neighboursOfVirtual = getNeighboursOfVirtualField(virtual);
 		
@@ -85,12 +95,31 @@ public class VirtualConnection {
 		return new Position(position.getX() + xShift, position.getY() + yShift);
 	}
 	
+	public boolean isThatConnection(Field a, Field b) {
+		if(hasVirtualField) {
+			return this.a.equals(a) || this.a.equals(b);
+		}
+		return (this.a.equals(a) && this.b.equals(b)) || (this.b.equals(a) && this.a.equals(b));
+	}
+	
 	public List<Field> getConnections(){
 		return connections;
 	}
 	
 	public int getConnectionsCount() {
 		return connections.size();
+	}
+	
+	public Field getA() {
+		return a;
+	}
+	
+	public Field getB() {
+		return b;
+	}
+	
+	public VirtualField getVirtual() {
+		return virtual;
 	}
 	
 	private boolean distanceIsOneField(Field a, Field b) {

@@ -4,21 +4,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import unideb.diploma.App;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.cache.Direction;
 import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
+import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
+import unideb.diploma.observer.Observer;
 
 public class BaseSelector {
 	private Field base;
 	private Player player;
+	private Observer observer;
 	
-	public BaseSelector(Player player) {
+	public BaseSelector(Player player, Observer observer) {
 		this.player = player;
+		this.observer = observer;
 	}
 	
 	public BaseSelector selectBaseByFieldValue(State state) {
@@ -45,8 +50,6 @@ public class BaseSelector {
 		}
 		int max = 0;
 		for(Field field : numberOfReachableFields.keySet()) {
-			System.out.println("field: " + field);
-			System.out.println("reachable field number: " + numberOfReachableFields.get(field));
 			if(max < numberOfReachableFields.get(field)) {
 				base = field;
 				max = numberOfReachableFields.get(field);
@@ -78,6 +81,14 @@ public class BaseSelector {
 				base = field;
 			}
 		}
+		addObserverToFields(getReachableFieldsFromField(base, new ArrayList<>()));
+		return this;
+	}
+	
+	public BaseSelector selectBaseByRandom(State state) {
+		List<Operator> operators = Cache.getUseableOperators();
+		Operator random = operators.get(new Random().nextInt(operators.size()));
+		base = state.getFieldAt(random.getPosition());
 		return this;
 	}
 	
@@ -94,7 +105,7 @@ public class BaseSelector {
 	
 	private boolean canReachTheEnd(State state, Field field) {
 		for(Direction direction : player.getDirections()) {
-			boolean canReachTheEnd = canReachTheEndInDirection(state, field, direction);
+			boolean canReachTheEnd = canReachTheEndInDirection(state, field, direction, new ArrayList<>());
 			if(!canReachTheEnd) {
 				return false;
 			}
@@ -103,17 +114,20 @@ public class BaseSelector {
 		return true;
 	}
 
-	private boolean canReachTheEndInDirection(State state, Field actual, Direction direction) {
+	private boolean canReachTheEndInDirection(State state, Field actual, Direction direction, List<Field> alreadyWas) {
 		for(Field field : Cache.getNeighboursByDirection(direction, actual)) {
-			if(field.getX() == 0 || field.getX() == App.BOARD_SIZE - 1) {
-				return true;
-			}
-			if(field.getY() == 0 || field.getY() == App.BOARD_SIZE - 1) {
-				return true;
-			}
-			FieldColor color = state.getFieldAt(field.getPosition()).getColor();
-			if(color == FieldColor.WHITE || color == player.getColor()) {
-				return canReachTheEndInDirection(state, field, direction);
+			if(!alreadyWas.contains(field)) {
+				alreadyWas.add(field);
+				if(field.getX() == 0 || field.getX() == App.BOARD_SIZE - 1) {
+					return true;
+				}
+				if(field.getY() == 0 || field.getY() == App.BOARD_SIZE - 1) {
+					return true;
+				}
+				FieldColor color = state.getFieldAt(field.getPosition()).getColor();
+				if(color == FieldColor.WHITE || color == player.getColor()) {
+					return canReachTheEndInDirection(state, field, direction, alreadyWas);
+				}
 			}
 		}
 		return false;
@@ -129,6 +143,12 @@ public class BaseSelector {
 			}
 		}
 		return reachableFields;
+	}
+	
+	private void addObserverToFields(List<Field> fields) {
+		for(Field field : fields) {
+			field.addObserver(observer);
+		}
 	}
 	
 }

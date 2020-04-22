@@ -7,6 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import unideb.diploma.App;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.config.AppConfig;
 import unideb.diploma.domain.Field;
@@ -26,8 +27,9 @@ public class VirtualConnectionAspect {
 			Position position = ((Operator) returnValue).getPosition();
 			Field searchedField = new Field(position, FieldColor.WHITE);
 			try (ConfigurableApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class)) {
-		        Player playerOne = appContext.getBean("playerOne", Player.class);
-		        Player playerTwo = appContext.getBean("playerTwo", Player.class);
+				App app = appContext.getBean(App.class);
+		        Player playerOne = app.getPlayerOne();
+		        Player playerTwo = app.getPlayerTwo();
 		        
 		        for(VirtualConnection connection : Cache.getVirtualConnectionsOf(playerOne)) {
 		        	if(connection.getConnections().contains(searchedField)) {

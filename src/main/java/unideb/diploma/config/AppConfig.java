@@ -28,7 +28,7 @@ import unideb.diploma.view.HexViewImpl;
 @EnableAspectJAutoProxy
 public class AppConfig {
 
-	private final int NUMBER_OF_ROUNDS = 1;
+	private final int NUMBER_OF_ROUNDS = 9;
 	
 	@Bean
 	public HexView view() {
@@ -57,7 +57,7 @@ public class AppConfig {
 	@Bean(name="playerThree")
 	public Player playerThree() {
 		AIPlayer ai = new AIPlayer("AI player three", FieldColor.BLUE);
-		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,3), winningStrategy(ai,2)});
+		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
 		return ai;
 	}
 	

@@ -12,6 +12,7 @@ import unideb.diploma.domain.Position;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
+import unideb.diploma.strategy.connection.ConnectionUtil;
 import unideb.diploma.strategy.connection.VirtualConnection;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
@@ -30,17 +31,21 @@ public class FieldConnectorStrategy implements Strategy {
 	@Override
 	public Operator getNextMove(State state) {
 		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-			if(connection.getConnectionsCount() == 1 && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
+			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
 				nextMove = Cache.getOperatorAt(connection.getConnections().get(0).getPosition());
 				Cache.removeVirtualConnection(player, connection);
 				break;
 			}
 		}
 		if(nextMove == null) {
-			VirtualConnection connection = Cache.getVirtualConnectionsOf(player).get(0);
-			Field field = connection.getConnections().get(0);
-			nextMove = Cache.getOperatorAt(field.getPosition());
-			Cache.removeVirtualConnection(player, connection);
+			for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
+				if(!canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
+					Field field = connection.getConnections().get(0);
+					nextMove = Cache.getOperatorAt(field.getPosition());
+					Cache.removeVirtualConnection(player, connection);
+					break;
+				}
+			}
 		}
 		return nextMove;
 	}
@@ -48,7 +53,8 @@ public class FieldConnectorStrategy implements Strategy {
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		boolean canEnd = (canEndFromVirtualConnections(state.clone()));
-		return (virtualConnectionWithOneFieldMakesThePathLonger(state.clone()) || canEnd) ? StrategyStrength.strong(longestWayLength) : StrategyStrength.weak(1);
+		boolean makesLonger = virtualConnectionWithOneFieldMakesThePathLonger(state.clone());
+		return ( makesLonger || canEnd) ? StrategyStrength.strong(longestWayLength) : StrategyStrength.weak(1);
 	}
 
 	
@@ -63,14 +69,15 @@ public class FieldConnectorStrategy implements Strategy {
 				}
 			}
 		}
+		
 		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
 			int actualLenght;
-			if(connection.getConnectionsCount() == 1) {
+			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state)) {
 				Position position = connection.getConnections().get(0).getPosition();
 				State actualState = state.clone();
 				actualState.applyOperator(Cache.getOperatorAt(position));
 				actualLenght = actualState.getLongestPathLength(position.getX(), position.getY(), player.getColor(), new ArrayList<>());
-				System.out.println("longest: " + longestWayLength + ", actual: " + actualLenght);
+				System.out.println("ok1");
 				if(actualLenght > longestWayLength) {
 					longestWayLength = actualLenght;
 					nextMove = Cache.getOperatorAt(position);
@@ -87,7 +94,7 @@ public class FieldConnectorStrategy implements Strategy {
 		for(VirtualConnection connection : connections) {
 			Field field = connection.getConnections().get(0);
 			Operator operator = Cache.getOperatorAt(field.getPosition());
-			operator.use(state.getTable(), player.getColor());
+			operator.use(state.getTable(),player.getColor());
 			if(state.isEndState(player.getColor())) {
 				return true;
 			}
@@ -101,7 +108,6 @@ public class FieldConnectorStrategy implements Strategy {
 		List<Field> neighbours = Cache.getNeighbours(field);
 		for(Field actual : neighbours) {
 			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
-			System.out.println("reachable fields: " + reachableFields);
 			for(Field reachableField : reachableFields) {
 				if(player.getColor() == FieldColor.RED) {
 					if(reachableField.getX() == field.getX()) {

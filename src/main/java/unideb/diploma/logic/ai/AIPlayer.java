@@ -1,6 +1,7 @@
 package unideb.diploma.logic.ai;
 
 import unideb.diploma.domain.FieldColor;
+import unideb.diploma.exception.StrategyCanNotChooseException;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.PlayerWithNameAndColor;
@@ -23,8 +24,8 @@ public class AIPlayer extends PlayerWithNameAndColor {
 			try {
 				strategy = chooseStrategy(state);
 				nextMove = strategy.getNextMove(state);
-			} catch(NullPointerException ex){
-				System.out.println("Strategy deactiveted: " + strategy.getClass());
+			} catch(StrategyCanNotChooseException ex){
+				ex.printStackTrace();
 				strategy.deActivate();
 			}
 		}

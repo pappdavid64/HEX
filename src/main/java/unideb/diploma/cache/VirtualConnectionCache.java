@@ -23,10 +23,6 @@ public class VirtualConnectionCache {
 		}
 	}
 	
-	void addVirtualConnection(Player player, Field field) {
-		
-	}
-	
 	void addVirtualConnection(Player player, VirtualConnection connection) {
 		search(player).addVirtualConnection(connection);
 	}
@@ -102,7 +98,7 @@ public class VirtualConnectionCache {
 	}
 	
 	private boolean isOneFieldAwayFromEnd(Field selectedField, Direction direction) {
-		return Cache.getNeighboursOfLevelByDirection(direction, selectedField, 1).isEmpty();
+		return Cache.getNeighboursOfLevelByDirection(direction, selectedField, 1).size() < 3;
 	}
 	
 	private static class Map {

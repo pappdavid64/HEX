@@ -151,25 +151,49 @@ public class Cache {
 	}
 	
 	public static List<Field> getSouthNeighbours(Field field){
-		List<Field> neighbours = new ArrayList<>(Arrays.asList(getNeighbourByDirection(field, Direction.SOUTH), getNeighbourByDirection(field, Direction.SOUTH_WEST)));
+		List<Field> neighbours = new ArrayList<>(
+				Arrays.asList(
+						getNeighbourByDirection(field, Direction.SOUTH),
+						getNeighbourByDirection(field, Direction.SOUTH_WEST),
+						getNeighbourByDirection(field, Direction.EAST)
+						)
+				);
 		neighbours.removeIf(Objects::isNull);
 		return neighbours;
 	}
 	
 	public static List<Field> getWestNeighbours(Field field){
-		List<Field> neighbours = new ArrayList<>(Arrays.asList(getNeighbourByDirection(field, Direction.WEST), getNeighbourByDirection(field, Direction.SOUTH_WEST)));
+		List<Field> neighbours = new ArrayList<>(
+				Arrays.asList(
+						getNeighbourByDirection(field, Direction.WEST),
+						getNeighbourByDirection(field, Direction.SOUTH_WEST),
+						getNeighbourByDirection(field, Direction.SOUTH)
+						)
+				);
 		neighbours.removeIf(Objects::isNull);
 		return neighbours;
 	}
 	
 	public static List<Field> getNorthNeighbours(Field field){
-		List<Field> neighbours = new ArrayList<>(Arrays.asList(getNeighbourByDirection(field, Direction.NORTH), getNeighbourByDirection(field, Direction.NORTH_EAST)));
+		List<Field> neighbours = new ArrayList<>(
+				Arrays.asList(
+						getNeighbourByDirection(field, Direction.NORTH),
+						getNeighbourByDirection(field, Direction.NORTH_EAST),
+						getNeighbourByDirection(field, Direction.WEST)
+						)
+				);
 		neighbours.removeIf(Objects::isNull);
 		return neighbours;
 	}
 	
 	public static List<Field> getEastNeighbours(Field field){
-		List<Field> neighbours = new ArrayList<>(Arrays.asList(getNeighbourByDirection(field, Direction.EAST), getNeighbourByDirection(field, Direction.NORTH_EAST)));
+		List<Field> neighbours = new ArrayList<>(
+				Arrays.asList(
+						getNeighbourByDirection(field, Direction.EAST),
+						getNeighbourByDirection(field, Direction.NORTH_EAST),
+						getNeighbourByDirection(field, Direction.NORTH)
+						)
+				);
 		neighbours.removeIf(Objects::isNull);
 		return neighbours;
 	}
@@ -185,6 +209,8 @@ public class Cache {
 		neighbours.removeIf(Objects::isNull);
 		return neighbours;
 	}
+	
+	
 	
 	public static List<Field> getNeighboursOfLevel(Field field, int level){
 		return getFieldNeighboursCacheByField(field).getNeighboursOfLevel(level);

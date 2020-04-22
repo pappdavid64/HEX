@@ -51,7 +51,7 @@ public abstract class PlayerWithNameAndColor implements Player {
 		result = prime * result + Objects.hash(color, name);
 		return result;
 	}
-
+	
 	@Override
 	public boolean isEquals(Player other) {
 		return this.name == other.getName() && this.color == other.getColor();
@@ -62,11 +62,11 @@ public abstract class PlayerWithNameAndColor implements Player {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PlayerWithNameAndColor)) {
+		if (!(obj instanceof Player)) {
 			return false;
 		}
-		PlayerWithNameAndColor other = (PlayerWithNameAndColor) obj;
-		return color == other.color && Objects.equals(name, other.name);
+		Player other = (Player) obj;
+		return color == other.getColor() && Objects.equals(name, other.getName());
 	}
 	
 	

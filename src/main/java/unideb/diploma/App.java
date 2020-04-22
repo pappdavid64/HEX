@@ -2,7 +2,6 @@ package unideb.diploma;
 
 import unideb.diploma.annotation.ExecutionTime;
 import unideb.diploma.cache.Cache;
-import unideb.diploma.domain.Table;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.service.HexService;
@@ -79,8 +78,11 @@ public class App{
 		}
     }
     
-    public Table getTable() {
-    	return state.getTable();
+    public Player getPlayerOne() {
+    	return playerOne;
     }
     
+    public Player getPlayerTwo() {
+    	return playerTwo;
+    }
 }
