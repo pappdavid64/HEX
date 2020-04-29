@@ -29,8 +29,8 @@ public enum Direction {
 				direction = actual;
 			}
 		}
-		
 		return direction;
 	}
+
 	
 }

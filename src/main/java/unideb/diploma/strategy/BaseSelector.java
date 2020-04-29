@@ -62,11 +62,9 @@ public class BaseSelector {
 	public BaseSelector selectBaseFromWhiteFields(State state) {
 		Map<Field, Integer> goodnessOfField = new HashMap<>();
 		List<Field> whiteFields = new ArrayList<>();
-		for(Field field : state.getTable().getFields()) {
-			if(field.getColor() == FieldColor.WHITE) {
+		for(Field field : Cache.withColor(state.getTable().getFields(), FieldColor.WHITE)) {
 				goodnessOfField.put(field, field.getGoodness());
 				whiteFields.add(field);
-			}
 		}
 		for(Field field : whiteFields) {
 			if(canReachTheEnd(state, field)) {
@@ -124,7 +122,7 @@ public class BaseSelector {
 				if(field.getY() == 0 || field.getY() == App.BOARD_SIZE - 1) {
 					return true;
 				}
-				FieldColor color = state.getFieldAt(field.getPosition()).getColor();
+				FieldColor color = field.getColor();
 				if(color == FieldColor.WHITE || color == player.getColor()) {
 					return canReachTheEndInDirection(state, field, direction, alreadyWas);
 				}

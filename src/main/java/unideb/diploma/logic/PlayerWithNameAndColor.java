@@ -23,12 +23,19 @@ public abstract class PlayerWithNameAndColor implements Player {
 		}
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public FieldColor getColor() {
 		return color;
+	}
+	
+	@Override
+	public FieldColor getOpponentColor() {
+		return (color == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE; 
 	}
 	
 	@Override

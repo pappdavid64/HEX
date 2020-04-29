@@ -31,7 +31,7 @@ public class App{
     	statistic = new GameStatistic();
     	statistic.savePlayer(playerOne);
     	statistic.savePlayer(playerTwo);
-    	state = Cache.getBaseState();
+    	state = Cache.getState();
     }
     
     @ExecutionTime
@@ -43,7 +43,7 @@ public class App{
     }
     
     private void playOneMatch() {    	
-    	state = Cache.getBaseState();
+    	state = Cache.getState();
     	Cache.resetUseableOperators();
     	while(true) {
     		state.applyOperator(service.getNextMoveFrom(playerOne, state));
@@ -52,7 +52,7 @@ public class App{
     			statistic.addWinToPlayer(playerOne);
     			System.out.println("--------------------------------------------");
     			sleep(3000);
-    			Cache.resetBaseState();
+    			Cache.resetState();
     			SpringApp.setStage();
     			break;
     		}
@@ -62,14 +62,14 @@ public class App{
     			statistic.addWinToPlayer(playerTwo);
     			System.out.println("--------------------------------------------");
     			sleep(3000);
-    			Cache.resetBaseState();
+    			Cache.resetState();
     			SpringApp.setStage();
     			break;
     		}
     	}
     }
 
-    private void sleep(int millis) {
+    public static void sleep(int millis) {
     	try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {

@@ -37,11 +37,11 @@ public class AIPlayer extends PlayerWithNameAndColor {
 	private Strategy chooseStrategy(State state) {
 		Strategy bestStrategy = null;
 		StrategyStrength strongest = null;
-		for(Strategy strat : strategies) {
-			if(strat.isActive()) {
-				StrategyStrength strength = strat.getGoodnessByState(state);
+		for(Strategy strategy : strategies) {
+			if(strategy.isActive()) {
+				StrategyStrength strength = strategy.getGoodnessByState(state);
 				if(strength.isStrongerThan(strongest)) {
-					bestStrategy = strat;
+					bestStrategy = strategy;
 					strongest = strength;
 				}
 			}

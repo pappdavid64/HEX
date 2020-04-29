@@ -45,7 +45,7 @@ public class VirtualConnectionCache {
 		List<VirtualConnection> virtualConnections = new ArrayList<>();
 		
 		for(Field neighbour : Cache.getNeighboursOfLevel(field, 1)) {
-			if(state.getFieldAt(neighbour.getPosition()).getColor() == player.getColor()) {
+			if(neighbour.getColor() == player.getColor()) {
 				VirtualConnection virtualConnection = new VirtualConnection(field, neighbour);
 				if(virtualConnection.getConnectionsCount() != 0) {
 					virtualConnections.add(virtualConnection);

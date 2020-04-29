@@ -27,7 +27,7 @@ public class FieldNeighboursCache {
 	
 	private static List<FieldNeighboursCache> generateFieldsNeighbours() {
 		List<FieldNeighboursCache> fieldsNeighbours = new ArrayList<>();
-		List<Field> allField = Cache.getBaseState().getTable().getFields();
+		List<Field> allField = Cache.getState().getTable().getFields();
 		
 		for(Field field : allField) {
 			FieldNeighboursCache fnc = new FieldNeighboursCache();
@@ -70,7 +70,7 @@ public class FieldNeighboursCache {
 	
 	private Field getFieldByDirection(Direction direction) {
 		Field field = null;
-		Table table = Cache.getBaseState().getTable();		
+		Table table = Cache.getState().getTable();		
 		switch (direction) {
 		case EAST:
 			field = table.getFieldAt(createPositionWithShift(0, 1));

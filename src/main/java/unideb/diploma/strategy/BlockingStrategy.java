@@ -48,7 +48,7 @@ public class BlockingStrategy implements Strategy {
 
 
 	private boolean opponentCouldEndInXTurns(List<Operator> useableOperators, State state, int x) {
-		FieldColor opponentColor = (player.getColor() == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE;
+		FieldColor opponentColor = player.getOpponentColor();
 		if(x == 0) {
 			return state.isEndState(opponentColor);
 		}

@@ -4,7 +4,6 @@ package unideb.diploma.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import unideb.diploma.App;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
@@ -30,13 +29,13 @@ public class FieldConnectorStrategy implements Strategy {
 	
 	@Override
 	public Operator getNextMove(State state) {
-		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
-				nextMove = Cache.getOperatorAt(connection.getConnections().get(0).getPosition());
-				Cache.removeVirtualConnection(player, connection);
-				break;
-			}
-		}
+//		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
+//			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
+//				nextMove = Cache.getOperatorAt(connection.getConnections().get(0).getPosition());
+//				Cache.removeVirtualConnection(player, connection);
+//				break;
+//			}
+//		}
 		if(nextMove == null) {
 			for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
 				if(!canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
@@ -60,24 +59,15 @@ public class FieldConnectorStrategy implements Strategy {
 	
 	
 	private boolean virtualConnectionWithOneFieldMakesThePathLonger(State state) {
-		List<Position> checkedIndexes = new ArrayList<>();
-		for(int i = 0; i < App.BOARD_SIZE; i++) {
-			for(int j = 0; j < App.BOARD_SIZE; j++) {
-				int actualLength = state.getLongestPathLength(i, j, player.getColor(), checkedIndexes);
-				if(longestWayLength < actualLength) {
-					longestWayLength = actualLength;
-				}
-			}
-		}
+		longestWayLength = state.getPathLength(player.getColor());
 		
 		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
 			int actualLenght;
-			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state)) {
+			if(connection.getConnectionsCount() == 1 && (ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection))) {
 				Position position = connection.getConnections().get(0).getPosition();
 				State actualState = state.clone();
-				actualState.applyOperator(Cache.getOperatorAt(position));
-				actualLenght = actualState.getLongestPathLength(position.getX(), position.getY(), player.getColor(), new ArrayList<>());
-				System.out.println("ok1");
+				Cache.getOperatorAt(position).use(actualState.getTable(), player.getColor());
+				actualLenght = actualState.getPathLength(player.getColor());
 				if(actualLenght > longestWayLength) {
 					longestWayLength = actualLenght;
 					nextMove = Cache.getOperatorAt(position);

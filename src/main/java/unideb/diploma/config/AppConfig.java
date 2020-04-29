@@ -17,6 +17,7 @@ import unideb.diploma.strategy.BlockingStrategy;
 import unideb.diploma.strategy.BridgeStrategy;
 import unideb.diploma.strategy.FieldConnectorStrategy;
 import unideb.diploma.strategy.FieldValueStrategy;
+import unideb.diploma.strategy.PathBlockingStrategy;
 import unideb.diploma.strategy.RandomStrategy;
 import unideb.diploma.strategy.Strategy;
 import unideb.diploma.strategy.WinningStrategy;
@@ -50,7 +51,15 @@ public class AppConfig {
 	@Bean(name="playerTwo")
 	public Player playerTwo() {
 		AIPlayer ai = new AIPlayer("AI player two", FieldColor.RED);
-		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), fieldValueStrategy(), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
+		ai.setStrategies(new Strategy[] {
+				bridgeStrategy(ai),
+				fieldConnectorStrategy(ai),
+				fieldValueStrategy(),
+				randomStrategy(),
+				blockingStrategy(ai,2),
+				winningStrategy(ai,2),
+				pathBlockingStrategy(ai)
+				});
 		return ai;
 	}
 	
@@ -91,6 +100,9 @@ public class AppConfig {
 		return new WinningStrategy(player, depth);
 	}
 	
+	public Strategy pathBlockingStrategy(Player player) {
+		return new PathBlockingStrategy(player);
+	}
 	
 	@Bean
 	public App app() {

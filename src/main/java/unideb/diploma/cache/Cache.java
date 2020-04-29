@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import unideb.diploma.domain.Field;
+import unideb.diploma.domain.FieldColor;
 import unideb.diploma.domain.Position;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
@@ -60,12 +61,12 @@ public class Cache {
 	public static List<State> getStates(){
 		return stateCache.getStates();
 	}
-	public static State getBaseState() {
-		return stateCache.getBaseState();
+	public static State getState() {
+		return stateCache.getState();
 	}
 	
-	public static void resetBaseState() {
-		stateCache.resetBaseState();
+	public static void resetState() {
+		stateCache.resetState();
 	}
 	
 	public static void registerPlayer(Player player) {
@@ -210,14 +211,36 @@ public class Cache {
 		return neighbours;
 	}
 	
-	
-	
 	public static List<Field> getNeighboursOfLevel(Field field, int level){
 		return getFieldNeighboursCacheByField(field).getNeighboursOfLevel(level);
 	}
 	
 	public static List<Field> getNeighboursOfLevelByDirection(Direction direction, Field field, int level){
 		return getFieldNeighboursCacheByField(field).getNeighboursOfLevelByDirection(direction, level);
+	}
+
+	public static List<Field> withoutColor(List<Field> elements, FieldColor color){
+		List<Field> copyOfElements = new ArrayList<>(elements);
+		List<Field> forRemove = new ArrayList<>();
+		copyOfElements.forEach((element) -> {
+			if(element.getColor() == color) {
+				forRemove.add(element);
+			}
+		});
+		copyOfElements.removeAll(forRemove);
+		return copyOfElements;
+	}
+	
+	public static List<Field> withColor(List<Field> elements, FieldColor color){
+		List<Field> copyOfElements = new ArrayList<>(elements);
+		List<Field> forRemove = new ArrayList<>();
+		copyOfElements.forEach((element) -> {
+			if(element.getColor() != color) {
+				forRemove.add(element);
+			}
+		});
+		copyOfElements.removeAll(forRemove);
+		return copyOfElements;
 	}
 	
 	private static FieldNeighboursCache getFieldNeighboursCacheByField(Field field) {

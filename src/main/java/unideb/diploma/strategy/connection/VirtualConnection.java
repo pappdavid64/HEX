@@ -63,7 +63,7 @@ public class VirtualConnection {
 	
 	private Field getFieldByDirection(Direction direction, Position position) {
 		Field field = null;
-		Table table = Cache.getBaseState().getTable();		
+		Table table = Cache.getState().getTable();		
 		switch (direction) {
 		case EAST:
 			field = table.getFieldAt(createPositionWithShift(position, 0, 1));
@@ -122,6 +122,10 @@ public class VirtualConnection {
 		return virtual;
 	}
 	
+	public boolean hasVirtualField() {
+		return hasVirtualField;
+	}
+	
 	private boolean distanceIsOneField(Field a, Field b) {
 		return Cache.getNeighboursOfLevel(a, 1).contains(b);
 	}
@@ -134,7 +138,9 @@ public class VirtualConnection {
 				connections.add(neighbour);
 			}
 		}
+	
 		removeNotWhiteFields(connections);
+		
 		return connections;
 	}
 	
@@ -148,7 +154,6 @@ public class VirtualConnection {
 		}
 		return reachable;
 	}
-
 
 	private void removeNotWhiteFields(List<Field> neighbours) {
 		List<Field> forRemove = new ArrayList<>();

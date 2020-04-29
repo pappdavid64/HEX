@@ -49,49 +49,44 @@ public class BridgeStrategy implements Strategy, Observer{
 		for(Direction direction : directions) {
 			if(!bridgeIsBuiltInDirection(base, direction)) {
 				Field actual = base;
-				Field previous = null;
-				while(	selectedField == null ) {
-					List<Field> neighbours = new ArrayList<>();
-					for(Field neighbour : Cache.getNeighboursByDirection(direction, actual)) {
-						FieldColor color = state.getFieldAt(neighbour.getPosition()).getColor();
-						if(color == FieldColor.WHITE || color  == player.getColor()) {
-							neighbours.addAll(Cache.getNeighboursByDirection(direction, neighbour));
-						}
-						
-					}
-					checkForGoodnessOfElements(state, direction, neighbours);
-					previous = actual;
-					actual = getPlayersFieldFromList(neighbours, state);
-					if(actual == null) {
-						selectedField = selectFieldFromList(neighbours, 2, state);
-//						if(selectedField == null) {
-//							selectedField = getFieldInOneRange(previous, direction, state);
-//						}
-						break;
-					}
+				while(selectedField == null && actual.getColor() == player.getColor()) {
+					actual = selectField(state, actual, direction);
+				}
+				if(selectedField != base && actual != base) {
+					selectedField = actual;
 				}
 			}
 		}
+
 		if(selectedField == null) {
 			throw new StrategyCanNotChooseException("Bridge strategy can not choose.");
 		}
 		return Cache.getOperatorAt(selectedField.getPosition());
 	}
 	
-	private void checkForGoodnessOfElements(State state, Direction direction, List<Field> neighbours) {
-		List<Field> removedElements = new ArrayList<>();
-		for(Field field : neighbours) {
-			List<Field> neighboursByDirection = Cache.getNeighboursByDirection(direction, field);
-			for(Field actual : neighboursByDirection) {
-				FieldColor opponentColor = (player.getColor() == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE; 
-				if(state.getFieldAt(actual.getPosition()).getColor() == opponentColor) {
-					removedElements.add(field);
-				}
-			}
+	private Field selectField(State state, Field actual, Direction direction) {
+		List<Field> firstLevelNeighbours = new ArrayList<>();
+		List<Field> secondLevelNeighbours = new ArrayList<>();
+		Field selected;
+		for(Field neighbour : Cache.withoutColor(Cache.getNeighboursByDirection(direction, actual), player.getOpponentColor())) {
+			firstLevelNeighbours.add(neighbour);
+			secondLevelNeighbours.addAll(Cache.withoutColor(Cache.getNeighboursByDirection(direction, neighbour), player.getOpponentColor()));
 		}
-		neighbours.removeAll(removedElements);
-	}
+		
+		selected = getPlayersFieldFromList(secondLevelNeighbours, direction);
+		if(selected == null) {
+			selected = getPlayersFieldFromList(firstLevelNeighbours, direction);
+		}
+		if(selected == null) {
+			selected = selectFieldFromList(secondLevelNeighbours, 2);
+		}		
+		if(selected == null) {
+			selected = selectFieldFromList(firstLevelNeighbours, 1);
+		}
 
+		return selected;
+	}
+	
 	private boolean bridgeIsBuiltInDirection(Field field, Direction direction) {
 
 		if(player.getColor() == FieldColor.RED) {
@@ -108,49 +103,46 @@ public class BridgeStrategy implements Strategy, Observer{
 			}
 		}
 		
-		for(Field actual : Cache.getNeighboursOfLevelByDirection(direction, field, 1)) {
-			if(actual.getColor() == player.getColor()) {
-				return bridgeIsBuiltInDirection(actual, direction);				
-			}
+		for(Field actual : Cache.withColor(Cache.getNeighboursOfLevelByDirection(direction, field, 1), player.getColor())) {
+			return bridgeIsBuiltInDirection(actual, direction);							
 		}
 		return false;
 	}
 
-	private Field getFieldInOneRange(Field field,Direction direction, State state) {
-		Field actual = field;
-		List<Field> neighbours = new ArrayList<>();
-		for(Field neighbour : Cache.getNeighboursByDirection(direction, actual)) {
-			FieldColor color = state.getFieldAt(neighbour.getPosition()).getColor();
-			if( (color == FieldColor.WHITE || color  == player.getColor()) ) {
-				neighbours.add(neighbour);
-			}
-		}
-
-		return selectFieldFromList(neighbours, 1, state);
-	}
-
-	private Field getPlayersFieldFromList(List<Field> fields, State state) {
+	private Field getPlayersFieldFromList(List<Field> fields, Direction direction) {
+		List<Field> actualFields = new ArrayList<>();
 		for(Field field : fields) {
-			if(state.getFieldAt(field.getPosition()).getColor() == player.getColor()) {
-				return field;
+			if(field.getColor() == player.getColor()) {
+				actualFields.add(field);
 			}
 		}
-		return null;
+		
+		Field selected = null;
+		int max = Integer.MIN_VALUE;
+		for(Field field : actualFields) {
+			List<Field> neighbours = Cache.withoutColor(Cache.getNeighboursByDirection(direction, field), player.getOpponentColor());
+			if(!neighbours.isEmpty() && max < neighbours.size()) {
+				selected = field;
+				max = neighbours.size();
+			}
+		}
+		
+		return selected;
 	}
 	
-	private Field selectFieldFromList(List<Field> fields, int minimumAppearence, State state) {
+	private Field selectFieldFromList(List<Field> fields, int minimum) {
 		Field selected = null;
 		int max = Integer.MIN_VALUE;
 		for(Field field : fields) {
-			int actualFieldCounter = (state.getFieldAt(field.getPosition()).getColor() == FieldColor.WHITE) ? getFieldAppearences(fields, field) : Integer.MIN_VALUE;
-			if( actualFieldCounter >= minimumAppearence && actualFieldCounter > max) {
+			int actualFieldCounter = (field.getColor() == FieldColor.WHITE) ? getFieldAppearences(fields, field) : Integer.MIN_VALUE;
+			if( actualFieldCounter >= minimum && actualFieldCounter > max) {
 				max = actualFieldCounter;
 				selected = field;
 			}
 		}
 		return selected;
 	}
-	
+
 	private int getFieldAppearences(List<Field> fields, Field field) {
 		int counter = 0;
 		for(Field actField : fields) {
@@ -166,7 +158,6 @@ public class BridgeStrategy implements Strategy, Observer{
 		if(base == null) {
 			baseChanged = true;
 			base = baseSelector.selectBaseFromWhiteFields(state).getBase();
-//			base = baseSelector.selectBaseByRandom(state).getBase();
 		}
 		if(baseSelector.canReachTheEndFromBase(state)) { 
 			return StrategyStrength.medium(3);

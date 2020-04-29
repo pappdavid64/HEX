@@ -129,7 +129,6 @@ public class State {
 		if(y < 0 || y > App.BOARD_SIZE - 1) {
 			return 0;
 		}
-		
 		Position index = new Position(x, y);
 		FieldColor fieldColor = table.getFieldAt(index).getColor();
 		
@@ -174,6 +173,30 @@ public class State {
 		return 0;
 	}
 	
+	public int getLongestPathLength(FieldColor playerColor) {
+		int longestPathLength = Integer.MIN_VALUE;
+		
+		for(Field field : Cache.withColor(table.getFields(), playerColor)) {
+			int actualLength = getLongestPathLength(field.getX(), field.getY(), playerColor, new ArrayList<>());
+			if(actualLength > longestPathLength) {
+				longestPathLength = actualLength;
+			}
+		}
+		
+		return longestPathLength;
+	}
+	
+	public int getPathLength(FieldColor playerColor) {
+		int sum = 0;
+		for(Field field : table.getFields()) {
+			if(field.getColor() == playerColor) {
+				sum += getLongestPathLength(field.getX(), field.getY(), playerColor, new ArrayList<>()) - 1;
+			}
+		}
+		return sum;
+	}
+	
+	
 	public State clone() {
 		return new State(table.clone(), color);
 	}
@@ -181,11 +204,12 @@ public class State {
 	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields) {
 		List<Field> neighbours = Cache.getNeighbours(field);
 		for(Field neighbour : neighbours) {
-			if(table.getFieldAt(neighbour.getPosition()).getColor() == color && !reachableFields.contains(neighbour)) {
+			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {
 				reachableFields.add(neighbour);
-				return getReachableFieldsFrom(neighbour, reachableFields);
+				getReachableFieldsFrom(neighbour, reachableFields);
 			}
 		}
 		return reachableFields;
 	}
+	
 }

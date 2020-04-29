@@ -11,7 +11,7 @@ import unideb.diploma.domain.Table;
 import unideb.diploma.game.State;
 
 public class StateCache {
-	private static State baseState;
+	private static State state;
 	private List<State> states;
 	
 	
@@ -36,18 +36,18 @@ public class StateCache {
 		return states;
 	}
 	
-	State getBaseState() {
-		if(baseState == null) {
-			baseState = createBaseState();
+	State getState() {
+		if(state == null) {
+			state = createState();
 		}
-		return baseState;
+		return state;
 	}
 	
-	void resetBaseState() {
-		baseState = createBaseState();
+	void resetState() {
+		state = createState();
 	}
 	
-	private State createBaseState() {
+	private State createState() {
 		List<Field> fields = new ArrayList<>();
 		for(int i = 0; i < App.BOARD_SIZE; i++) {
 			for(int j = 0; j < App.BOARD_SIZE; j++) {

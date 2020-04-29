@@ -17,7 +17,9 @@ public class ConnectionUtil {
 		List<VirtualConnection> connections = getVirtualConnectionsBetween(connection.getA(), connection.getB(), player, state);
 		Set<Field> fieldsConnectedBy = new HashSet<>();
 		for(VirtualConnection actual : connections) {
-			fieldsConnectedBy.addAll(actual.getConnections());
+			if(actual.hasVirtualField() == connection.hasVirtualField()) {
+				fieldsConnectedBy.addAll(actual.getConnections());
+			}
 		}
 		return fieldsConnectedBy.size() == 1;
 	}
@@ -57,7 +59,7 @@ public class ConnectionUtil {
 			return null;
 		}
 		
-		if(state.getFieldAt(field.getPosition()).getColor() != player.getColor() || road.contains(field)) {
+		if(field.getColor() != player.getColor() || road.contains(field)) {
 			return road;
 		}
 		

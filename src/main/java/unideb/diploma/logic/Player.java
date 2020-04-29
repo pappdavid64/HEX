@@ -9,6 +9,8 @@ public interface Player {
 	
 	FieldColor getColor();
 	
+	FieldColor getOpponentColor();
+	
 	Operator getNextMove(State state);
 
 	String getName();
@@ -16,4 +18,5 @@ public interface Player {
 	Direction[] getDirections();
 	
 	boolean isEquals(Player other);
+	
 }

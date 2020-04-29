@@ -41,7 +41,7 @@ public class SpringApp extends Application {
 	
 	public static void setStage() {
 		Platform.runLater(() -> {
-			TableView root = new TableView(30, Cache.getBaseState().getTable());
+			TableView root = new TableView(30, Cache.getState().getTable());
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 		});
