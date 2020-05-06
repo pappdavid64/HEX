@@ -12,6 +12,7 @@ public abstract class PlayerWithNameAndColor implements Player {
 	private String name;
 	private FieldColor color;
 	private Direction[] directions;
+	private Player opponent;
 	
 	public PlayerWithNameAndColor(String name, FieldColor color) {
 		this.name = name;
@@ -41,6 +42,16 @@ public abstract class PlayerWithNameAndColor implements Player {
 	@Override
 	public Direction[] getDirections() {
 		return directions;
+	}
+	
+	@Override
+	public Player getOpponent() {
+		return opponent;
+	}
+	
+	@Override
+	public void setOpponent(Player opponent) {
+		this.opponent = opponent;
 	}
 	
 	public abstract Operator getNextMove(State state);

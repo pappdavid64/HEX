@@ -95,7 +95,7 @@ public class FieldConnectorStrategy implements Strategy {
 	private boolean canReachAnotherFieldIntheLineFromVirtualConnection(State state, VirtualConnection connection) {
 		List<Field> reachableFields = new ArrayList<>();
 		Field field = connection.getConnections().get(0);
-		List<Field> neighbours = Cache.getNeighbours(field);
+		List<Field> neighbours = Cache.withColor(Cache.getNeighbours(field), player.getColor());
 		for(Field actual : neighbours) {
 			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
 			for(Field reachableField : reachableFields) {

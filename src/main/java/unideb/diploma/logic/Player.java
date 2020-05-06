@@ -19,4 +19,7 @@ public interface Player {
 	
 	boolean isEquals(Player other);
 	
+	Player getOpponent();
+	
+	void setOpponent(Player opponent);
 }

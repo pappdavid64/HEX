@@ -68,20 +68,22 @@ public class BridgeStrategy implements Strategy, Observer{
 		List<Field> firstLevelNeighbours = new ArrayList<>();
 		List<Field> secondLevelNeighbours = new ArrayList<>();
 		Field selected;
-		for(Field neighbour : Cache.withoutColor(Cache.getNeighboursByDirection(direction, actual), player.getOpponentColor())) {
+		List<Field> neighbours =  Cache.withoutColor(Cache.getNeighboursByDirection(direction, actual), player.getOpponentColor());
+		for(Field neighbour : neighbours) {
 			firstLevelNeighbours.add(neighbour);
 			secondLevelNeighbours.addAll(Cache.withoutColor(Cache.getNeighboursByDirection(direction, neighbour), player.getOpponentColor()));
 		}
+		secondLevelNeighbours.removeAll(neighbours);
 		
 		selected = getPlayersFieldFromList(secondLevelNeighbours, direction);
 		if(selected == null) {
 			selected = getPlayersFieldFromList(firstLevelNeighbours, direction);
 		}
 		if(selected == null) {
-			selected = selectFieldFromList(secondLevelNeighbours, 2);
+			selected = selectFieldFromList(actual, direction, secondLevelNeighbours, 2);
 		}		
 		if(selected == null) {
-			selected = selectFieldFromList(firstLevelNeighbours, 1);
+			selected = selectFieldFromList(actual, direction, firstLevelNeighbours, 1);
 		}
 
 		return selected;
@@ -130,17 +132,59 @@ public class BridgeStrategy implements Strategy, Observer{
 		return selected;
 	}
 	
-	private Field selectFieldFromList(List<Field> fields, int minimum) {
+	private Field selectFieldFromList(Field actualField, Direction direction, List<Field> fields, int minimum) {
 		Field selected = null;
-		int max = Integer.MIN_VALUE;
+		List<Field> fieldsWithMinimum = new ArrayList<>();
 		for(Field field : fields) {
 			int actualFieldCounter = (field.getColor() == FieldColor.WHITE) ? getFieldAppearences(fields, field) : Integer.MIN_VALUE;
-			if( actualFieldCounter >= minimum && actualFieldCounter > max) {
-				max = actualFieldCounter;
+			if( actualFieldCounter >= minimum) {
+				fieldsWithMinimum.add(field);
+			}
+		}
+		
+		int reachableEndFieldsCounter = Integer.MIN_VALUE;
+		
+		for(Field field : fieldsWithMinimum) {
+			int actualReachableEndFieldsCounter = (distanceIs(field, actualField, minimum)) ? 6 * getReachableEndFields(field, direction) : getReachableEndFields(field, direction);
+			if(actualReachableEndFieldsCounter > reachableEndFieldsCounter) {
+				reachableEndFieldsCounter = actualReachableEndFieldsCounter;
 				selected = field;
 			}
 		}
+		
 		return selected;
+	}
+
+	private boolean distanceIs(Field field, Field actualField, int distance) {
+		if(player.getColor() == FieldColor.BLUE) {
+			if(Math.abs(field.getY() - actualField.getY() ) == distance) {
+				return true;
+			}
+		}
+		if(player.getColor() == FieldColor.RED) {
+			if(Math.abs(field.getX() - actualField.getX() ) == distance) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private int getReachableEndFields(Field field, Direction direction) {
+		int sum = 0;
+		for(Field actual : Cache.withoutColor(Cache.getNeighboursByDirection(direction, field),player.getOpponentColor())) {
+			sum += getReachableEndFields(actual, direction);
+		}
+		if(player.getColor() == FieldColor.BLUE) {
+			if(field.getY() == 0 || field.getY() == App.BOARD_SIZE - 1) {
+				sum += 1;
+			}
+		}
+		if(player.getColor() == FieldColor.RED) {
+			if(field.getX() == 0 || field.getX() == App.BOARD_SIZE - 1) {
+				sum += 1;
+			}
+		}
+		return sum;
 	}
 
 	private int getFieldAppearences(List<Field> fields, Field field) {
@@ -156,16 +200,16 @@ public class BridgeStrategy implements Strategy, Observer{
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		if(base == null) {
-			baseChanged = true;
 			base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+			baseChanged = true;
 		}
 		if(baseSelector.canReachTheEndFromBase(state)) { 
 			return StrategyStrength.medium(3);
-			} else {
-				base = baseSelector.selectBaseFromWhiteFields(state).getBase();
-				baseChanged = true;
-				return StrategyStrength.veryWeak(0);
-			}
+		} else {
+			base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+			baseChanged = true;
+			return StrategyStrength.veryWeak(0);
+		}
 	}
 
 	@Override

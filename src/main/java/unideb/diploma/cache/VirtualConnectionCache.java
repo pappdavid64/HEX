@@ -13,13 +13,19 @@ import unideb.diploma.strategy.connection.VirtualField;
 public class VirtualConnectionCache {
 	private List<Map> playersVirtualConnection;
 	
-	public VirtualConnectionCache() {
+	VirtualConnectionCache() {
 		playersVirtualConnection = new ArrayList<>();
 	}
 	
 	void registerPlayer(Player player) {
 		if(search(player) == null) {
 			playersVirtualConnection.add(new Map(player, new ArrayList<>()));
+		}
+	}
+	
+	void reset() {
+		for(Map m : playersVirtualConnection) {
+			m.reset();
 		}
 	}
 	
@@ -58,6 +64,17 @@ public class VirtualConnectionCache {
 			}
 		}
 		return virtualConnections;
+	}
+	
+	VirtualConnection getVirtualConnection(Player player, Field field) {
+		Map map = search(player);
+		VirtualConnection selected = null;
+		for(VirtualConnection connection : map.getConnections()) {
+			if(connection.getConnections().contains(field)) {
+				selected = connection;
+			}
+		}
+		return selected;
 	}
 	
 	void print() {
@@ -126,6 +143,10 @@ public class VirtualConnectionCache {
 		
 		public Player getPlayer() {
 			return player;
+		}
+		
+		public void reset() {
+			connections = new ArrayList<>();
 		}
 		
 		@Override

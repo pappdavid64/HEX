@@ -26,6 +26,12 @@ public class Cache {
 		fieldsNeighbours = FieldNeighboursCache.getFieldsNeighbours();
 	}
 
+	public static void reset() {
+		operatorCache.fillUseableOperators();
+		stateCache.resetState();
+		virtualConnnectionCache.reset();
+	}
+	
 	public static Operator getOperatorAt(Position position) {
 		return operatorCache.getOperatorAt(position);
 	}
@@ -92,6 +98,10 @@ public class Cache {
 		for(VirtualConnection connection : virtualConnnectionCache.getVirtualConnectionsFrom(player, field, state)) {
 			virtualConnnectionCache.addVirtualConnection(player, connection);
 		}
+	}
+	
+	public static VirtualConnection getConnectionFromField(Player player, Field field) {
+		return virtualConnnectionCache.getVirtualConnection(player, field);
 	}
 	
 	public static void printVIrtualConnectionsWithPlayers() {

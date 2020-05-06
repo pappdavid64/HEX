@@ -136,7 +136,7 @@ public class BaseSelector {
 			for(Field actual : Cache.getNeighboursByDirection(direction, field)) {
 				if( (actual.getColor() == player.getColor() || actual.getColor() == FieldColor.WHITE) && !reachableFields.contains(actual)) {
 					reachableFields.add(actual);
-					return getReachableFieldsFromField(actual, reachableFields);
+					getReachableFieldsFromField(actual, reachableFields);
 				}
 			}
 		}

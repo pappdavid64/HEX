@@ -32,6 +32,8 @@ public class App{
     	statistic.savePlayer(playerOne);
     	statistic.savePlayer(playerTwo);
     	state = Cache.getState();
+    	this.playerOne.setOpponent(playerTwo);
+    	this.playerTwo.setOpponent(playerOne);
     }
     
     @ExecutionTime
@@ -44,16 +46,13 @@ public class App{
     
     private void playOneMatch() {    	
     	state = Cache.getState();
-    	Cache.resetUseableOperators();
     	while(true) {
     		state.applyOperator(service.getNextMoveFrom(playerOne, state));
     		if(state.isEndState()) {
     			view.printWinner(playerOne);
     			statistic.addWinToPlayer(playerOne);
     			System.out.println("--------------------------------------------");
-    			sleep(3000);
-    			Cache.resetState();
-    			SpringApp.setStage();
+    			resetGame();
     			break;
     		}
     		state.applyOperator(service.getNextMoveFrom(playerTwo, state));
@@ -61,21 +60,25 @@ public class App{
     			view.printWinner(playerTwo);
     			statistic.addWinToPlayer(playerTwo);
     			System.out.println("--------------------------------------------");
-    			sleep(3000);
-    			Cache.resetState();
-    			SpringApp.setStage();
+    			resetGame();
     			break;
     		}
     	}
     }
 
-    public static void sleep(int millis) {
+    public void sleep(int millis) {
     	try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    private void resetGame() {
+    	sleep(3000);
+    	Cache.reset();
+    	SpringApp.setStage();
     }
     
     public Player getPlayerOne() {
