@@ -5,6 +5,7 @@ import unideb.diploma.exception.StrategyCanNotChooseException;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.PlayerWithNameAndColor;
+import unideb.diploma.strategy.BridgeStrategy;
 import unideb.diploma.strategy.Strategy;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
@@ -26,7 +27,7 @@ public class AIPlayer extends PlayerWithNameAndColor {
 				nextMove = strategy.getNextMove(state);
 			} catch(StrategyCanNotChooseException ex){
 				ex.printStackTrace();
-				strategy.deActivate();
+				((BridgeStrategy)strategy).reCalculateBase(state);
 			}
 		}
 
@@ -38,17 +39,16 @@ public class AIPlayer extends PlayerWithNameAndColor {
 		Strategy bestStrategy = null;
 		StrategyStrength strongest = null;
 		for(Strategy strategy : strategies) {
-			if(strategy.isActive()) {
-				StrategyStrength strength = strategy.getGoodnessByState(state);
-				if(strength.isStrongerThan(strongest)) {
-					bestStrategy = strategy;
-					strongest = strength;
-				}
+			StrategyStrength strength = strategy.getGoodnessByState(state);
+			if(strength.isStrongerThan(strongest)) {
+				bestStrategy = strategy;
+				strongest = strength;
 			}
 		}
 		return bestStrategy;
 	}
 	
+	@Override
 	public void setStrategies(Strategy[] strategies) {
 		this.strategies = strategies;
 	}

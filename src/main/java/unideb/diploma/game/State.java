@@ -202,11 +202,23 @@ public class State {
 	}
 
 	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields) {
+//		List<Field> neighbours = Cache.getNeighbours(field);
+//		for(Field neighbour : neighbours) {
+//			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {
+//				reachableFields.add(neighbour);
+//				getReachableFieldsFrom(neighbour, reachableFields);
+//			}
+//		}
+//		return reachableFields;
+		return getReachableFieldsFrom(field, reachableFields, color);
+	}
+
+	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields, FieldColor color) {
 		List<Field> neighbours = Cache.getNeighbours(field);
 		for(Field neighbour : neighbours) {
 			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {
 				reachableFields.add(neighbour);
-				getReachableFieldsFrom(neighbour, reachableFields);
+				getReachableFieldsFrom(neighbour, reachableFields, color);
 			}
 		}
 		return reachableFields;

@@ -20,7 +20,6 @@ public class HexServiceImpl implements HexService {
 		}
 		Cache.removeOperatorFromUseableOperators(nextMove);
 		Cache.addVirtualConnectionsFromField(player, state.getFieldAt(nextMove.getPosition()), state);
-//		Cache.printVIrtualConnectionsWithPlayers();
 		return nextMove;
 	}
 

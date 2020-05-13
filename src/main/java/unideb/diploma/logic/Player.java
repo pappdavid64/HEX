@@ -4,6 +4,7 @@ import unideb.diploma.cache.Direction;
 import unideb.diploma.domain.FieldColor;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
+import unideb.diploma.strategy.Strategy;
 
 public interface Player {
 	
@@ -22,4 +23,6 @@ public interface Player {
 	Player getOpponent();
 	
 	void setOpponent(Player opponent);
+	
+	void setStrategies(Strategy[] strategies);
 }

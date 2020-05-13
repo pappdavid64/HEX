@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import unideb.diploma.cache.Cache;
 import unideb.diploma.config.AppConfig;
-import unideb.diploma.view.TableView;
+import unideb.diploma.view.graphic.TableView;
 
 public class SpringApp extends Application {
 	

@@ -144,11 +144,11 @@ public class FieldNeighboursCache {
 	}
 	
 	List<Field> getNeighboursOfLevelByDirection(Direction direction, int level){
-		List<Field> neighbours = Cache.getNeighboursByDirection(direction, field);
+		List<Field> neighbours = Cache.getNeighboursByDirection(direction, field).getFields();
 		for(int i = 0; i < level; i++) {
 			List<Field> nextLevelNeighbours = new ArrayList<>();
 			for(Field neighbour : neighbours) {
-				List<Field> act = Cache.getNeighboursByDirection(direction,neighbour);
+				List<Field> act = Cache.getNeighboursByDirection(direction,neighbour).getFields();
 				nextLevelNeighbours.addAll(act);
 			}
 			nextLevelNeighbours.removeAll(neighbours);

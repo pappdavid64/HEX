@@ -59,28 +59,4 @@ public class PathBlockingStrategy implements Strategy {
 		return false;
 	}
 
-	@Override
-	public boolean isActive() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public void deActivate() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void activate() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void reCalculate(State state) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

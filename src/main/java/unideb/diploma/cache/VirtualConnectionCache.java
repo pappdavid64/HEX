@@ -49,17 +49,20 @@ public class VirtualConnectionCache {
 
 	List<VirtualConnection> getVirtualConnectionsFrom(Player player, Field field, State state){
 		List<VirtualConnection> virtualConnections = new ArrayList<>();
+		List<Field> reachableFields = state.getReachableFieldsFrom(field, new ArrayList<>(), player.getColor());
 		
 		for(Field neighbour : Cache.getNeighboursOfLevel(field, 1)) {
-			if(neighbour.getColor() == player.getColor()) {
-				VirtualConnection virtualConnection = new VirtualConnection(field, neighbour);
-				if(virtualConnection.getConnectionsCount() != 0) {
-					virtualConnections.add(virtualConnection);
+			if(!reachableFields.contains(neighbour)) {
+				if(neighbour.getColor() == player.getColor()) {
+					VirtualConnection virtualConnection = new VirtualConnection(field, neighbour);
+					if(virtualConnection.getConnectionsCount() != 0) {
+						virtualConnections.add(virtualConnection);
+					}
 				}
-			}
-			for(Direction direction : player.getDirections()) {
-				if(isOneFieldAwayFromEnd(field, direction)) {
-					virtualConnections.add(new VirtualConnection(field, getVirtualField(field, direction)));
+				for(Direction direction : player.getDirections()) {
+					if(isOneFieldAwayFromEnd(field, direction)) {
+						virtualConnections.add(new VirtualConnection(field, getVirtualField(field, direction)));
+					}
 				}
 			}
 		}

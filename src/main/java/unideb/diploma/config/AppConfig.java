@@ -42,36 +42,27 @@ public class AppConfig {
 	}
 	
 	@Bean(name="playerOne")
-	public Player playerOne() {
+	public Player blueHumanPlayer() {
 		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.BLUE);
 		return humanPlayer;
 	}
 	
 	
 	@Bean(name="playerTwo")
-	public Player playerTwo() {
+	public Player redAIPlayer() {
 		AIPlayer ai = new AIPlayer("AI player two", FieldColor.RED);
-		ai.setStrategies(new Strategy[] {
-				bridgeStrategy(ai),
-				fieldConnectorStrategy(ai),
-				fieldValueStrategy(),
-				randomStrategy(),
-				blockingStrategy(ai,2),
-				winningStrategy(ai,2),
-				pathBlockingStrategy(ai)
-				});
 		return ai;
 	}
 	
 	@Bean(name="playerThree")
-	public Player playerThree() {
+	public Player blueAIPlayer() {
 		AIPlayer ai = new AIPlayer("AI player three", FieldColor.BLUE);
 		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
 		return ai;
 	}
 	
 	@Bean(name="playerFour")
-	public Player playerFour() {
+	public Player redHumanPlayer() {
 		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.RED);
 		return humanPlayer;
 	}
@@ -104,12 +95,40 @@ public class AppConfig {
 		return new PathBlockingStrategy(player);
 	}
 	
+	private void setAiPlayerStrategies(Player player, Strategy[] strategies) {
+		player.setStrategies(strategies);
+	}
+	
+	private void setAiPlayersStrategies() {
+		setAiPlayerStrategies(redAIPlayer(), new Strategy[] {
+				bridgeStrategy(redAIPlayer()),
+				fieldConnectorStrategy(redAIPlayer()),
+				fieldValueStrategy(),
+				randomStrategy(),
+				blockingStrategy(redAIPlayer(), 2),
+				winningStrategy(redAIPlayer(),2),
+				pathBlockingStrategy(redAIPlayer())
+				});
+		setAiPlayerStrategies(blueAIPlayer(), new Strategy[] {
+				bridgeStrategy(blueAIPlayer()),
+				fieldConnectorStrategy(blueAIPlayer()),
+				fieldValueStrategy(),
+				randomStrategy(),
+				blockingStrategy(blueAIPlayer(), 2),
+				winningStrategy(blueAIPlayer(),2),
+				pathBlockingStrategy(blueAIPlayer())
+				});
+	}
+	
+	
 	@Bean
 	public App app() {
-		Cache.registerPlayer(playerOne());
-		Cache.registerPlayer(playerTwo());
-		Cache.registerPlayer(playerThree());
-		Cache.registerPlayer(playerFour());
-		return new App(service(), view(), playerOne(), playerTwo(), NUMBER_OF_ROUNDS);
+		Cache.registerPlayer(blueHumanPlayer());
+		Cache.registerPlayer(redAIPlayer());
+		Cache.registerPlayer(blueAIPlayer());
+		Cache.registerPlayer(redHumanPlayer());
+		App app = new App(service(), view(), blueHumanPlayer(), redAIPlayer(), NUMBER_OF_ROUNDS);
+		setAiPlayersStrategies();
+		return app;
 	}
 }

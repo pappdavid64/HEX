@@ -1,4 +1,4 @@
-package unideb.diploma.view;
+package unideb.diploma.view.graphic;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;

@@ -12,8 +12,6 @@ import unideb.diploma.game.State;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
 public class FieldValueStrategy implements Strategy{
-
-	private boolean active = true;
 	
 	@Override
 	public Operator getNextMove(State state) {
@@ -43,25 +41,5 @@ public class FieldValueStrategy implements Strategy{
 		Random rand = new Random();
 		return bestValuedFields.get(rand.nextInt(bestValuedFields.size()));
 	}
-	
-	@Override
-	public boolean isActive() {
-		return active;
-	}
 
-	@Override
-	public void deActivate() {
-		active = false;
-	}
-
-	@Override
-	public void activate() {
-		active = true;		
-	}
-
-	@Override
-	public void reCalculate(State state) {
-		// TODO Auto-generated method stub
-		
-	}
 }

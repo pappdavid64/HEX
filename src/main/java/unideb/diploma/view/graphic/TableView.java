@@ -1,4 +1,4 @@
-package unideb.diploma.view;
+package unideb.diploma.view.graphic;
 
 import java.util.List;
 

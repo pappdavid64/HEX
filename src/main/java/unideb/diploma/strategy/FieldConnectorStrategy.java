@@ -18,13 +18,11 @@ import unideb.diploma.strategy.strength.StrategyStrength;
 public class FieldConnectorStrategy implements Strategy {
 
 	private Player player;
-	private boolean active;
 	private int longestWayLength;
 	private Operator nextMove;
 	
 	public FieldConnectorStrategy(Player player) {
 		this.player = player;
-		active = true;
 	}
 	
 	@Override
@@ -96,17 +94,25 @@ public class FieldConnectorStrategy implements Strategy {
 		List<Field> reachableFields = new ArrayList<>();
 		Field field = connection.getConnections().get(0);
 		List<Field> neighbours = Cache.withColor(Cache.getNeighbours(field), player.getColor());
+		System.out.println("virtual connection: " + connection);
 		for(Field actual : neighbours) {
+			System.out.println("actual field: " + actual);
 			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
+			System.out.println("reachable fields: " + reachableFields);
 			for(Field reachableField : reachableFields) {
-				if(player.getColor() == FieldColor.RED) {
-					if(reachableField.getX() == field.getX()) {
-						return true;
-					}
-				}
-				if(player.getColor() == FieldColor.BLUE) {
-					if(reachableField.getY() == field.getY()) {
-						return true;
+				VirtualConnection con =  Cache.getConnectionFromField(player, reachableField);
+				if(con != null) {
+					for(Field connectionOfVirtualConenction : con.getConnections()) {
+						if(player.getColor() == FieldColor.RED) {
+							if(connectionOfVirtualConenction.getX() == field.getX()) {
+								return true;
+							}
+						}
+						if(player.getColor() == FieldColor.BLUE) {
+							if(connectionOfVirtualConenction.getY() == field.getY()) {
+								return true;
+							}
+						}
 					}
 				}
 			}
@@ -114,24 +120,4 @@ public class FieldConnectorStrategy implements Strategy {
 		return false;
 	}
 	
-	@Override
-	public boolean isActive() {
-		return active;
-	}
-
-	@Override
-	public void deActivate() {
-		active = false;
-	}
-
-	@Override
-	public void activate() {
-		active = true;		
-	}
-
-	@Override
-	public void reCalculate(State state) {
-		// TODO Auto-generated method stub
-		
-	}
 }
