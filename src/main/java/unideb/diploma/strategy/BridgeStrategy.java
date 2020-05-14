@@ -137,7 +137,7 @@ public class BridgeStrategy implements Strategy, Observer {
 		Field selected = null;
 		List<Field> fieldsWithMinimum = new ArrayList<>();
 		for (Field field : fields) {
-			int actualFieldCounter = (field.getColor() == FieldColor.WHITE) ? getFieldAppearences(fields, field)
+			int actualFieldCounter = (field.getColor() == FieldColor.WHITE) ? getFieldAppearances(fields, field)
 					: Integer.MIN_VALUE;
 			if (actualFieldCounter >= minimum) {
 				fieldsWithMinimum.add(field);
@@ -173,6 +173,35 @@ public class BridgeStrategy implements Strategy, Observer {
 		return false;
 	}
 
+	private int getFirstOpponentFieldDistance(Field field, Direction direction){
+		List<Field> neighbours = Cache.getNeighboursByDirection(direction, field).getFields();
+		for(;;){
+			List<Field> nextNeighbours = new ArrayList<>();
+			for(Field neighbour : neighbours){
+				int distance = checkForOpponentField(neighbour, direction);
+				if(distance != -1){
+					return distance;
+				}
+				nextNeighbours.addAll(Cache.getNeighboursByDirection(direction, neighbour).getFields());
+			}
+			neighbours = nextNeighbours;
+			if(neighbours.isEmpty()){
+				break;
+			}
+		}
+
+		return Integer.MIN_VALUE;
+	}
+
+	private int checkForOpponentField(Field field, Direction direction){
+		for(Field neighbour : Cache.getNeighboursByDirection(direction, field)){
+			if(neighbour.getColor() == player.getOpponentColor()){
+				return Math.abs(field.getX() - neighbour.getX());
+			}
+		}
+		return -1;
+	}
+
 	private int getReachableEndFields(Field field, Direction direction) {
 		int sum = 0;
 		for (Field actual : Cache.getNeighboursByDirection(direction, field).withoutColor(player.getOpponentColor())) {
@@ -191,7 +220,7 @@ public class BridgeStrategy implements Strategy, Observer {
 		return sum;
 	}
 
-	private int getFieldAppearences(List<Field> fields, Field field) {
+	private int getFieldAppearances(List<Field> fields, Field field) {
 		int counter = 0;
 		for (Field actField : fields) {
 			if (actField.equals(field)) {
@@ -204,13 +233,15 @@ public class BridgeStrategy implements Strategy, Observer {
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		if (base == null) {
-			base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+	//		base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+			base = baseSelector.selectBaseByFieldValue(state).getBase();
 			baseChanged = true;
 		}
 		if (baseSelector.canReachTheEndFromBase(state)) {
 			return StrategyStrength.medium(3);
 		} else {
-			base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+	//		base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+			base = baseSelector.selectBaseByFieldValue(state).getBase();
 			baseChanged = true;
 			return StrategyStrength.veryWeak(0);
 		}

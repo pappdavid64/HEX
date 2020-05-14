@@ -128,11 +128,11 @@ public class FieldNeighboursCache {
 	}
 	
 	List<Field> getNeighboursOfLevel(int level){
-		List<Field> neighbours = Cache.getNeighbours(field);
+		List<Field> neighbours = Cache.getNeighbours(field).getFields();
 		for(int i = 0; i < level; i++) {
 			List<Field> nextLevelNeighbours = new ArrayList<>();
 			for(Field neighbour : neighbours) {
-				List<Field> act = Cache.getNeighbours(neighbour);
+				List<Field> act = Cache.getNeighbours(neighbour).getFields();
 				nextLevelNeighbours.addAll(act);
 			}
 			nextLevelNeighbours.removeAll(neighbours);

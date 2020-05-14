@@ -34,7 +34,7 @@ public class VirtualConnection {
 		this.a = real;
 		this.virtual = virtual;
 		hasVirtualField = true;
-		List<Field> neighboursOfReal = Cache.getNeighbours(real);
+		List<Field> neighboursOfReal = Cache.getNeighbours(real).getFields();
 		List<Field> neighboursOfVirtual = getNeighboursOfVirtualField(virtual);
 		
 		connections = new ArrayList<>();
@@ -127,11 +127,11 @@ public class VirtualConnection {
 	}
 	
 	private boolean distanceIsOneField(Field a, Field b) {
-		return Cache.getNeighboursOfLevel(a, 1).contains(b);
+		return Cache.getNeighboursOfLevel(a, 1).getFields().contains(b);
 	}
 	
 	private List<Field> getConnectionsBetween(Field a, Field b) {
-		List<Field> neighbours = Cache.getNeighbours(a);
+		List<Field> neighbours = Cache.getNeighbours(a).getFields();
 		List<Field> connections = new ArrayList<>();
 		for(Field neighbour : neighbours) {
 			if(reachableFrom(neighbour, b)) {
@@ -146,7 +146,7 @@ public class VirtualConnection {
 	
 	private boolean reachableFrom(Field a, Field b) {
 		boolean reachable = false;
-		List<Field> neighbours = Cache.getNeighbours(a);
+		List<Field> neighbours = Cache.getNeighbours(a).getFields();
 		for(Field neighbour : neighbours) {
 			if(neighbour.equals(b)) {
 				reachable = true;

@@ -110,8 +110,8 @@ public class Cache {
 		virtualConnnectionCache.print();
 	}
 
-	public static List<Field> getNeighbours(Field field) {
-		return getFieldNeighboursCacheByField(field).getNeighbours();
+	public static FieldList getNeighbours(Field field) {
+		return new FieldList(getFieldNeighboursCacheByField(field).getNeighbours());
 	}
 
 	public static Field getNeighbourByDirection(Field field, Direction direction) {
@@ -209,8 +209,8 @@ public class Cache {
 		return new FieldList(neighbours);
 	}
 
-	public static List<Field> getNeighboursOfLevel(Field field, int level) {
-		return getFieldNeighboursCacheByField(field).getNeighboursOfLevel(level);
+	public static FieldList getNeighboursOfLevel(Field field, int level) {
+		return new FieldList(getFieldNeighboursCacheByField(field).getNeighboursOfLevel(level));
 	}
 
 	public static List<Field> getNeighboursOfLevelByDirection(Direction direction, Field field, int level) {

@@ -20,70 +20,20 @@ public class BaseSelector {
 	private Field base;
 	private Player player;
 	private Observer observer;
+	private FieldValueStrategy fieldValueStrategy;
 
 	public BaseSelector(Player player, Observer observer) {
 		this.player = player;
 		this.observer = observer;
+		this.fieldValueStrategy = new FieldValueStrategy(player);
 	}
 
 	public BaseSelector selectBaseByFieldValue(State state) {
 
-		for (Field field : state.getTable().getFields()) {
-			if (field.getColor() == player.getColor()) {
-				base = (base == null) ? field : base;
-				if (base.getGoodness() < field.getGoodness()) {
-					base = field;
-				}
-			}
-		}
-		return this;
-	}
-
-	public Field selectBase(State state) {
-		List<Field> canEndFromFields = new ArrayList<>();
-		for (Field field : state.getTable().getFields()) {
-			if (field.getColor() == FieldColor.WHITE) {
-				if (canReachTheEnd(state, field)) {
-					canEndFromFields.add(field);
-				}
-			}
-		}
-
-		int endFromMinimumSteps = Integer.MAX_VALUE;
-
-		System.out.println(canEndFromFields);
-
-		for (Field field : canEndFromFields) {
-			int actualEndStepCounter = getMinimumStepsForEnd(state, field);
-			System.out.println(actualEndStepCounter);
-			if (actualEndStepCounter < endFromMinimumSteps) {
-				endFromMinimumSteps = actualEndStepCounter;
-				base = field;
-			}
-		}
-
+		base = fieldValueStrategy.getBestValueOfFields(state);
 		addObserverToFields(getReachableFieldsFromField(base, new ArrayList<>()));
 
-		return base;
-	}
-
-	private int getMinimumStepsForEnd(State state, Field field) {
-		return getMinimumStepsForEnd(state.clone(), Cache.getUseableOperators(), new ArrayList<>(), field, 0);
-	}
-
-	private int getMinimumStepsForEnd(State state, List<Operator> useableOperators, List<Integer> endCounter,
-			Field field, int x) {
-		for (Operator operator : useableOperators) {
-			operator.use(state.getTable(), player.getColor());
-			if (state.isEndState(player.getColor())) {
-				endCounter.add(x);
-			}
-			List<Operator> copy = new ArrayList<>(useableOperators);
-			copy.remove(operator);
-			getMinimumStepsForEnd(state, copy, endCounter, field, x + 1);
-			operator.use(state.getTable(), FieldColor.WHITE);
-		}
-		return endCounter.stream().sorted().findFirst().get();
+		return this;
 	}
 
 	public BaseSelector selectBaseByBridge(State state) {

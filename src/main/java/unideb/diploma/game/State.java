@@ -214,8 +214,7 @@ public class State {
 	}
 
 	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields, FieldColor color) {
-		List<Field> neighbours = Cache.getNeighbours(field);
-		for(Field neighbour : neighbours) {
+		for(Field neighbour : Cache.getNeighbours(field)) {
 			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {
 				reachableFields.add(neighbour);
 				getReachableFieldsFrom(neighbour, reachableFields, color);

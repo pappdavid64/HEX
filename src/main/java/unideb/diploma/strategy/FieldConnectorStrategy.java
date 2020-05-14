@@ -93,23 +93,21 @@ public class FieldConnectorStrategy implements Strategy {
 	private boolean canReachAnotherFieldIntheLineFromVirtualConnection(State state, VirtualConnection connection) {
 		List<Field> reachableFields = new ArrayList<>();
 		Field field = connection.getConnections().get(0);
-		List<Field> neighbours = Cache.withColor(Cache.getNeighbours(field), player.getColor());
-		System.out.println("virtual connection: " + connection);
-		for(Field actual : neighbours) {
+		for(Field actual : Cache.getNeighbours(field).withColor(player.getColor())) {
 			System.out.println("actual field: " + actual);
 			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
 			System.out.println("reachable fields: " + reachableFields);
 			for(Field reachableField : reachableFields) {
 				VirtualConnection con =  Cache.getConnectionFromField(player, reachableField);
 				if(con != null) {
-					for(Field connectionOfVirtualConenction : con.getConnections()) {
+					for(Field connectionOfVirtualConnection : con.getConnections()) {
 						if(player.getColor() == FieldColor.RED) {
-							if(connectionOfVirtualConenction.getX() == field.getX()) {
+							if(connectionOfVirtualConnection.getX() == field.getX()) {
 								return true;
 							}
 						}
 						if(player.getColor() == FieldColor.BLUE) {
-							if(connectionOfVirtualConenction.getY() == field.getY()) {
+							if(connectionOfVirtualConnection.getY() == field.getY()) {
 								return true;
 							}
 						}

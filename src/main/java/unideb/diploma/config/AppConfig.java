@@ -75,8 +75,8 @@ public class AppConfig {
 		return new FieldConnectorStrategy(player);
 	}
 	
-	public Strategy fieldValueStrategy() {
-		return new FieldValueStrategy();
+	public Strategy fieldValueStrategy(Player player) {
+		return new FieldValueStrategy(player);
 	}
 	
 	public Strategy randomStrategy(){
@@ -103,7 +103,7 @@ public class AppConfig {
 		setAiPlayerStrategies(redAIPlayer(), new Strategy[] {
 				bridgeStrategy(redAIPlayer()),
 				fieldConnectorStrategy(redAIPlayer()),
-				fieldValueStrategy(),
+				fieldValueStrategy(redAIPlayer()),
 				randomStrategy(),
 				blockingStrategy(redAIPlayer(), 2),
 				winningStrategy(redAIPlayer(),2),
@@ -112,7 +112,7 @@ public class AppConfig {
 		setAiPlayerStrategies(blueAIPlayer(), new Strategy[] {
 				bridgeStrategy(blueAIPlayer()),
 				fieldConnectorStrategy(blueAIPlayer()),
-				fieldValueStrategy(),
+				fieldValueStrategy(blueAIPlayer()),
 				randomStrategy(),
 				blockingStrategy(blueAIPlayer(), 2),
 				winningStrategy(blueAIPlayer(),2),
