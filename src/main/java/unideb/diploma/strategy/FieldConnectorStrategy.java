@@ -15,38 +15,59 @@ import unideb.diploma.strategy.connection.ConnectionUtil;
 import unideb.diploma.strategy.connection.VirtualConnection;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
+/**
+ * Strategy which connects the player's fields. 
+ * */
 public class FieldConnectorStrategy implements Strategy {
 
+	/**
+	 * The player whom virtual connections will be connected.
+	 * */
 	private Player player;
+	
+	/**
+	 * The longest way length.
+	 * */
 	private int longestWayLength;
+	
+	/**
+	 * The next move.
+	 * */
 	private Operator nextMove;
 	
+	/**
+	 * Constructor.
+	 * @param player The player whom virtual connections will be connected.
+	 * */
 	public FieldConnectorStrategy(Player player) {
 		this.player = player;
 	}
 	
+	/**
+	 * Gets the next move by the state.
+	 * @param state The state of the game.
+	 * @return The operator which will be used.
+	 * */
 	@Override
 	public Operator getNextMove(State state) {
-//		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-//			if(connection.getConnectionsCount() == 1 && ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
-//				nextMove = Cache.getOperatorAt(connection.getConnections().get(0).getPosition());
-//				Cache.removeVirtualConnection(player, connection);
-//				break;
-//			}
-//		}
-		if(nextMove == null) {
-			for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
-				if(!canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
-					Field field = connection.getConnections().get(0);
-					nextMove = Cache.getOperatorAt(field.getPosition());
-					Cache.removeVirtualConnection(player, connection);
-					break;
-				}
+	if(nextMove == null) {
+		for(VirtualConnection connection : Cache.getVirtualConnectionsOf(player)) {
+			if(!canReachAnotherFieldIntheLineFromVirtualConnection(state, connection)) {
+				Field field = connection.getConnections().get(0);
+				nextMove = Cache.getOperatorAt(field.getPosition());
+				Cache.removeVirtualConnection(player, connection);
+				break;
 			}
 		}
-		return nextMove;
+	}
+	return nextMove;
 	}
 
+	/**
+	 * Gets the goodness of the strategy by the state.
+	 * @param state The state of the game.
+	 * @return The strength of the strategy by the state.
+	 * */
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		boolean canEnd = (canEndFromVirtualConnections(state.clone()));
@@ -54,8 +75,11 @@ public class FieldConnectorStrategy implements Strategy {
 		return ( makesLonger || canEnd) ? StrategyStrength.strong(longestWayLength) : StrategyStrength.weak(1);
 	}
 
-	
-	
+	/**
+	 * Checks if a virtual connection with only one field will make the path longer.
+	 * @param state The state of the game.
+	 * @return true if a virtual connection with one field makes the path longer.
+	 */
 	private boolean virtualConnectionWithOneFieldMakesThePathLonger(State state) {
 		longestWayLength = state.getPathLength(player.getColor());
 		
@@ -77,6 +101,11 @@ public class FieldConnectorStrategy implements Strategy {
 		return false;
 	}
 
+	/**
+	 * Checks if can end with the usage of the virtual connections.
+	 * @param state The state of the game.
+	 * @return true If can end with the usage of the virtual connections.
+	 * */
 	private boolean canEndFromVirtualConnections(State state) {
 		List<VirtualConnection> connections = Cache.getVirtualConnectionsOf(player);
 		for(VirtualConnection connection : connections) {
@@ -90,12 +119,18 @@ public class FieldConnectorStrategy implements Strategy {
 		return false;
 	}
 
+	/**
+	 * Checks if a virtual connection with one field is important to choose
+	 * because its the only one connection.
+	 * @param state The state of the game.
+	 * @return true If a virtual connection is the only one.
+	 * */
 	private boolean canReachAnotherFieldIntheLineFromVirtualConnection(State state, VirtualConnection connection) {
 		List<Field> reachableFields = new ArrayList<>();
 		Field field = connection.getConnections().get(0);
 		for(Field actual : Cache.getNeighbours(field).withColor(player.getColor())) {
 			System.out.println("actual field: " + actual);
-			reachableFields = state.getReachableFieldsFrom(actual, new ArrayList<>());
+			reachableFields = state.getReachableFieldsFrom(actual);
 			System.out.println("reachable fields: " + reachableFields);
 			for(Field reachableField : reachableFields) {
 				VirtualConnection con =  Cache.getConnectionFromField(player, reachableField);

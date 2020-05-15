@@ -17,10 +17,16 @@ import unideb.diploma.game.Operator;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.connection.VirtualConnection;
 
+/**
+ * Aspect for the virtual connections.
+ * */
 @Aspect
 @Component
 public class VirtualConnectionAspect {
 
+	/**
+	 * After a player move, removes the virtual connection of the field from the cache if it existed.
+	 * */
 	@AfterReturning(pointcut="onPlayerMove()", returning="returnValue")
 	public void onPlayerMoveRemoveFieldFromVirtualConenction(Object returnValue) {
 		if(returnValue != null) {

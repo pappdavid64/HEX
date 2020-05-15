@@ -13,15 +13,34 @@ import javafx.scene.paint.Color;
 import unideb.diploma.domain.Field;
 import unideb.diploma.domain.Table;
 
+
+/**
+ * Responsive for the appearance of the board.
+ * */
 public class TableView extends AnchorPane {
-	Table table;
-	double fieldHeight;
-	double fieldWidth;
-	double fieldSize;
 	
+	/**
+	 * The table, which the display will belong to.
+	 * */
+	private Table table;
+	
+	/**
+	 * The height of a field.
+	 * */
+	private double fieldHeight;
+	
+	/**
+	 * The width of a field.
+	 * */
+	private double fieldWidth;
+	
+	/**
+	 * Constructor of the TableView.
+	 * @param fieldSize The size of a field.
+	 * @param table The table, which the display will belong to.
+	 * */
 	public TableView(double fieldSize, Table table) {
 		this.table = table;
-		this.fieldSize = fieldSize;
 		fieldHeight = FieldView.getHeight(fieldSize);
 		fieldWidth = FieldView.getWidth(fieldSize);
 		
@@ -31,6 +50,14 @@ public class TableView extends AnchorPane {
 
 	}
 
+	/**
+	 * Generates the FieldViews for the table's fields.
+	 * @param fieldSize The size of the field.
+	 * @param xOffset The size of the offset of x.
+	 * @param yOffset The size of the offset of y.
+	 * @param fieldWidth The width of the fields.
+	 * @param fieldHeight The height of the fields.
+	 * */
 	public void generateFieldViews(double fieldSize, double xOffset, double yOffset, double fieldWidth, double fieldHeight) {
 		getChildren().clear();
 		List<Field> fields = table.getFields();

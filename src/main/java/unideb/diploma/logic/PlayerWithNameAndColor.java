@@ -8,12 +8,35 @@ import unideb.diploma.domain.FieldColor;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 
+/**
+ * Player with name and color.
+ * */
 public abstract class PlayerWithNameAndColor implements Player {
+	/**
+	 * The name of the player.
+	 * */
 	private String name;
+	
+	/**
+	 * The color of the player.
+	 * */
 	private FieldColor color;
+	
+	/**
+	 * The direction where the player has to build the path.
+	 * */
 	private Direction[] directions;
+	
+	/**
+	 * The opponent.
+	 * */
 	private Player opponent;
 	
+	/**
+	 * Constructor.
+	 * @param name The name of the player.
+	 * @param color The color of the player.
+	 * */
 	public PlayerWithNameAndColor(String name, FieldColor color) {
 		this.name = name;
 		this.color = color;
@@ -24,36 +47,66 @@ public abstract class PlayerWithNameAndColor implements Player {
 		}
 	}
 	
+	
+	/**
+	 * Gets the name.
+	 * @return The name.
+	 * */
 	@Override
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Gets the color of the player.
+	 * @return The color of the player.
+	 * */
 	@Override
 	public FieldColor getColor() {
 		return color;
 	}
 	
+	/**
+	 * Gets the opponent color of the player.
+	 * @return The color of the opponent.
+	 * */
 	@Override
 	public FieldColor getOpponentColor() {
 		return (color == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE; 
 	}
 	
+	/**
+	 * Gets the directions where the player has to build the path.
+	 * @return The direction where the player has to build the path.
+	 * */
 	@Override
 	public Direction[] getDirections() {
 		return directions;
 	}
 	
+	/**
+	 * Gets the opponent.
+	 * @return The opponent.
+	 * */
 	@Override
 	public Player getOpponent() {
 		return opponent;
 	}
 	
+	/**
+	 * Sets the opponent
+	 * @param opponent The opponent.
+	 * */
 	@Override
 	public void setOpponent(Player opponent) {
 		this.opponent = opponent;
 	}
 	
+	/**
+	 * Gets the next move by the state.
+	 * @param state The state of the game.
+	 * @return The operator which will be used.
+	 * */
 	public abstract Operator getNextMove(State state);
 
 	@Override
@@ -70,6 +123,11 @@ public abstract class PlayerWithNameAndColor implements Player {
 		return result;
 	}
 	
+	/**
+	 * Checks if the player is equals to the other.
+	 * @param other The other player.
+	 * @return true if the other player is equals with the player.
+	 * */
 	@Override
 	public boolean isEquals(Player other) {
 		return this.name == other.getName() && this.color == other.getColor();

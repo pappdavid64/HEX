@@ -15,50 +15,63 @@ import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.observer.Observer;
+import unideb.diploma.util.FieldList;
 
+/**
+ * Responsible for selecting a base field for the strategies.
+ * */
 public class BaseSelector {
+	/**
+	 * The base.
+	 * */
 	private Field base;
+	
+	/**
+	 * The player for choose the base.
+	 * */
 	private Player player;
+	
+	/**
+	 * 
+	 * */
 	private Observer observer;
+	
+	/**
+	 * Strategy to help the choice.
+	 * */
 	private FieldValueStrategy fieldValueStrategy;
 
+	/**
+	 * Constructor.
+	 * @param player The player for choose the base.
+	 * */
 	public BaseSelector(Player player, Observer observer) {
 		this.player = player;
 		this.observer = observer;
 		this.fieldValueStrategy = new FieldValueStrategy(player);
 	}
 
+	/**
+	 * Selects the base by values of the field.
+	 * */
 	public BaseSelector selectBaseByFieldValue(State state) {
 
-		base = fieldValueStrategy.getBestValueOfFields(state);
+		base = fieldValueStrategy.getBestValueOfFields();
 		addObserverToFields(getReachableFieldsFromField(base, new ArrayList<>()));
 
 		return this;
 	}
 
-	public BaseSelector selectBaseByBridge(State state) {
-		Map<Field, Integer> numberOfReachableFields = new HashMap<>();
-		for (Field field : state.getTable().getFields()) {
-			if (field.getColor() == player.getColor()) {
-				if (canReachTheEnd(state, field)) {
-					numberOfReachableFields.put(field, getReachableFieldsFromField(field, new ArrayList<>()).size());
-				}
-			}
-		}
-		int max = 0;
-		for (Field field : numberOfReachableFields.keySet()) {
-			if (max < numberOfReachableFields.get(field)) {
-				base = field;
-				max = numberOfReachableFields.get(field);
-			}
-		}
-		return this;
-	}
-
+	/**
+	 * Selects the base from white fields.
+	 * @param state The state of the game.
+	 * 
+	 * */
 	public BaseSelector selectBaseFromWhiteFields(State state) {
 		Map<Field, Integer> goodnessOfField = new HashMap<>();
 		List<Field> whiteFields = new ArrayList<>();
-		for (Field field : Cache.withColor(state.getTable().getFields(), FieldColor.WHITE)) {
+		FieldList list = new FieldList(state.getTable().getFields());
+		for (Field field : list.withColor(FieldColor.WHITE)) {
 			if (canReachTheEnd(state, field)) {
 				goodnessOfField.put(field, field.getGoodness());
 				whiteFields.add(field);
@@ -76,6 +89,10 @@ public class BaseSelector {
 		return this;
 	}
 
+	/**
+	 * Selects base randomly.
+	 * @param state The state of the game.
+	 * */
 	public BaseSelector selectBaseByRandom(State state) {
 		List<Operator> operators = Cache.getUseableOperators();
 		Operator random = operators.get(new Random().nextInt(operators.size()));
@@ -83,17 +100,24 @@ public class BaseSelector {
 		return this;
 	}
 
+	/**
+	 * Checks if can reach the and from the base.
+	 * @param state The state of the game.
+	 * @return true if can reach the end from base.
+	 * */
 	public boolean canReachTheEndFromBase(State state) {
 		if (base == null) {
 			return false;
 		}
 		return canReachTheEnd(state, base);
 	}
-
-	public Field getBase() {
-		return base;
-	}
-
+	
+	/**
+	 * Checks if can reach the end from a field.
+	 * @param state The state of the game.
+	 * @param field The field from the check starts
+	 * @return true if can reach the end from the field.
+	 * */
 	private boolean canReachTheEnd(State state, Field field) {
 		for (Direction direction : player.getDirections()) {
 			boolean canReachTheEnd = canReachTheEndInDirection(state, field, direction, new ArrayList<>());
@@ -105,6 +129,13 @@ public class BaseSelector {
 		return true;
 	}
 
+	/**
+	 * Checks if can reach the end from a field in direction.
+	 * @param state The state of the game.
+	 * @param actual The field from the check starts.
+	 * @param direction The direction where the check goes.
+	 * @return true if can reach the end from the field in the direction.
+	 * */
 	private boolean canReachTheEndInDirection(State state, Field actual, Direction direction, List<Field> alreadyWas) {
 		for (Field field : Cache.getNeighboursByDirection(direction, actual)) {
 			if (!alreadyWas.contains(field)) {
@@ -124,6 +155,12 @@ public class BaseSelector {
 		return false;
 	}
 
+	/**
+	 * Gets the reachable fields from a field.
+	 * @param field The field which wanted to get the reachable fields.
+	 * @param reachableFields List of the fields reachable from the field.
+	 * @return The reachable fields from field.
+	 * */
 	private List<Field> getReachableFieldsFromField(Field field, List<Field> reachableFields) {
 		for (Direction direction : player.getDirections()) {
 			for (Field actual : Cache.getNeighboursByDirection(direction, field)) {
@@ -137,10 +174,23 @@ public class BaseSelector {
 		return reachableFields;
 	}
 
+	/**
+	 * Add observer to the fields.
+	 * @param fields The fields to add the observer.
+	 * */
 	private void addObserverToFields(List<Field> fields) {
 		for (Field field : fields) {
 			field.addObserver(observer);
 		}
 	}
 
+	/**
+	 * Gets the base.
+	 * @return The base.
+	 * */
+	public Field getBase() {
+		return base;
+	}
+
+	
 }

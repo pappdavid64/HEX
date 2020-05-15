@@ -13,18 +13,46 @@ import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
+/**
+ * Strategy which watch for if the player can end the game.
+ * */
 public abstract class GameEndingStrategy implements Strategy {
 
+	/**
+	 * The selected field for the next move.
+	 * */
 	protected Field selected;
+	
+	/**
+	 * The player whom want to find an end state.
+	 * */
 	protected Player player;
-	protected int numberOfTurns;
+	
+	/**
+	 * The number of steps actually needed for an end state.
+	 */
+	protected int numberOfSteps;
+	
+	/**
+	 * The maximum allowed steps number.
+	 * */
 	protected int depth;
 
+	/**
+	 * Constructor.
+	 * @param player The player whom want to find an end state.
+	 * @param depth The maximum allowed steps number.
+	 * */
 	protected GameEndingStrategy(Player player, int depth) {
 		this.player = player;
 		this.depth = depth;
 	}
 
+	/**
+	 * Gets the next move by the state.
+	 * @param state The state of the game.
+	 * @return The operator which will be used.
+	 * */
 	@Override
 	public Operator getNextMove(State state) {
 		Operator nextMove = Cache.getOperatorAt(selected.getPosition());
@@ -32,23 +60,42 @@ public abstract class GameEndingStrategy implements Strategy {
 		return nextMove;
 	}
 
+	/**
+	 * Gets the goodness of the strategy by the state.
+	 * @param state The state of the game.
+	 * @return The strength of the strategy by the state.
+	 * */
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		boolean couldEnd = (couldEndInXTurns(state, depth));
-		return couldEnd ? StrategyStrength.veryStrong(App.BOARD_SIZE - numberOfTurns) : StrategyStrength.veryWeak(0);
+		return couldEnd ? StrategyStrength.veryStrong(App.BOARD_SIZE - numberOfSteps) : StrategyStrength.veryWeak(0);
 	}
 
+	/**
+	 * Returns true if could end in x turns.
+	 * @param state The state of the game.
+	 * @param x The number of turns.
+	 * @return true if could end in x turns.
+	 * */
 	protected boolean couldEndInXTurns(State state, int x) {
 		for (int i = 0; i < x; i++) {
-			if (couldEndInXTurns(Cache.getUseableOperators(), new ArrayList<>(), state.clone(), i + 1)) {
-				numberOfTurns = i;
+			if (couldEndInXTurns(state.clone(), Cache.getUseableOperators(), new ArrayList<>(), i + 1)) {
+				numberOfSteps = i;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	protected boolean couldEndInXTurns(List<Operator> useableOperators, List<Operator> usedOperators, State state,
+	/**
+	 * Return true if could end in x turns.
+	 * @param state The state of the game.
+	 * @param useableOperators Operators which can be used.
+	 * @param usedOperators Operators which already used in this method.
+	 * @param x The number of turns.
+	 * @return true if could end in x turns.
+	 * */
+	protected boolean couldEndInXTurns(State state, List<Operator> useableOperators, List<Operator> usedOperators,
 			int x) {
 		if (x == 0) {
 			return state.isEndState(player.getColor());
@@ -66,9 +113,9 @@ public abstract class GameEndingStrategy implements Strategy {
 				List<Operator> usedOperatorsCopy = new ArrayList<>(usedOperators);
 				usedOperatorsCopy.add(operator);
 
-				boolean couldEnd = couldEndInXTurns(remainingOperators, usedOperatorsCopy, state, x - 1);
+				boolean couldEnd = couldEndInXTurns(state, remainingOperators, usedOperatorsCopy, x - 1);
 				if (couldEnd) {
-					selectField(usedOperatorsCopy, state);
+					selectField(state, usedOperatorsCopy);
 					return true;
 				}
 			}
@@ -76,6 +123,11 @@ public abstract class GameEndingStrategy implements Strategy {
 		}
 		return false;
 	}
-
-	protected abstract void selectField(List<Operator> usedOperators, State state);
+	
+	/**
+	 * Selects a field from the list of used operators.
+	 * @param state The state of the game.
+	 * @param usedOperators The operators used for the ending state.
+	 * */
+	protected abstract void selectField(State state, List<Operator> usedOperators);
 }

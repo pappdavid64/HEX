@@ -12,16 +12,34 @@ import unideb.diploma.observer.Observable;
 import unideb.diploma.observer.Observer;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
+/**
+ * Strategy which selects the field with the best value.
+ * */
 public class FieldValueStrategy implements Strategy, Observer {
 
+	/**
+	 * A map that contains the goodness of each field.
+	 * */
 	private Map<Field, Integer> fieldsAndValues;
+	
+	/**
+	 * The player whom the strategy want to win.
+	 * */
 	private Player player;
 
+	/**
+	 * Constructor.
+	 * @param player The player whom the strategy want to win.
+	 * */
 	public FieldValueStrategy(Player player) {
 		this.player = player;
 		fieldsAndValues = getBaseValues();
 	}
 
+	/**
+	 * Initialize the base values.
+	 * @return The map of fields with their base values.
+	 * */
 	private Map<Field, Integer> getBaseValues() {
 		Map<Field, Integer> baseFieldsAndValues = new HashMap<>();
 
@@ -33,19 +51,33 @@ public class FieldValueStrategy implements Strategy, Observer {
 		return baseFieldsAndValues;
 	}
 
+	/**
+	 * Gets the next move by the state.
+	 * @param state The state of the game.
+	 * @return The operator which will be used.
+	 * */
 	@Override
 	public Operator getNextMove(State state) {
-		Field fieldByBestValue = getBestValueOfFields(state);
+		Field fieldByBestValue = getBestValueOfFields();
 		Operator nextOperator = Cache.getOperatorAt(fieldByBestValue.getX(), fieldByBestValue.getY());
 		return nextOperator;
 	}
 
+	/**
+	 * Gets the goodness of the strategy by the state.
+	 * @param state The state of the game.
+	 * @return The strength of the strategy by the state.
+	 * */
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
-		return StrategyStrength.weak(getBestValueOfFields(state).getGoodness());
+		return StrategyStrength.weak(getBestValueOfFields().getGoodness());
 	}
 	
-	public Field getBestValueOfFields(State state) {
+	/**
+	 * Gets the best valued field.
+	 * @return the best valued field.
+	 * */
+	public Field getBestValueOfFields() {
 		List<Field> bestValuedFields = new ArrayList<>();
 		int goodness = Integer.MIN_VALUE;
 		for(Field field : fieldsAndValues.keySet()) {
@@ -59,16 +91,34 @@ public class FieldValueStrategy implements Strategy, Observer {
 			}
 		}
 		Random rand = new Random();
+		System.out.println(bestValuedFields);
 		return bestValuedFields.get(rand.nextInt(bestValuedFields.size()));
 	}
 
+	/**
+	 * If a field's color is set, then notifies the strategy.
+	 * @param observable The field which color was set.
+	 * */
 	@Override
 	public void notify(Observable observable) {
 		Field field = (Field)observable;
-		//int plus = (field.getColor() == player.getColor()) ? -10 : 10;
-		//for(Field neighbour : Cache.getNeighboursOfLevel(field,1).withColor(FieldColor.WHITE)){
-		//	int value = fieldsAndValues.get(neighbour);
-		//	fieldsAndValues.put(neighbour, value + plus);
-		//}
+		if(field.getColor() == player.getColor()) {
+			setFieldValue(field, field, new ArrayList<>(), 1);
+		} else {
+			setFieldValue(field, field, new ArrayList<>(), -1);
+		}
 	}
+	
+	private void setFieldValue(Field base, Field field, List<Field> alreadyWas, int plus) {
+		fieldsAndValues.put(field, fieldsAndValues.get(field) + plus);
+		alreadyWas.add(field);
+		List<Field> neighbours = Cache.getNeighbours(field).withColor(FieldColor.WHITE);
+		for(Field neighbour : neighbours) {
+			if(!alreadyWas.contains(neighbour)) {
+				setFieldValue(base, neighbour, alreadyWas, plus + (1 * plus) );
+			}
+		}
+	}
+	
+	
 }

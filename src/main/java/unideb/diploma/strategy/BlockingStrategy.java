@@ -11,14 +11,28 @@ import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.connection.VirtualConnection;
 
+
+/**
+ * Strategy which tries to prevent the opponent from winning.
+ * */
 public class BlockingStrategy extends GameEndingStrategy {
 
+	/**
+	 * Constructor.
+	 * @param player The player whom opponent want to prevent to find an end state.
+	 * @param depth The maximum allowed steps number.
+	 * */
 	public BlockingStrategy(Player player, int depth) {
 		super(player.getOpponent(), depth);
 	}
 
+	/**
+	 * Selects a field from the list of used operators.
+	 * @param state The state of the game.
+	 * @param usedOperators The operators used for the ending state.
+	 * */
 	@Override
-	public void selectField(List<Operator> usedOperators, State state) {
+	public void selectField(State state, List<Operator> usedOperators) {
 		List<Field> fieldsWithMinimum = new ArrayList<>();
 		VirtualConnection selectedConnection = Cache.getConnectionFromField(player.getOpponent(), selected);
 		int max = selected == null ? Integer.MAX_VALUE

@@ -9,28 +9,62 @@ import unideb.diploma.domain.Field;
 import unideb.diploma.domain.FieldColor;
 import unideb.diploma.domain.Position;
 import unideb.diploma.domain.Table;
+import unideb.diploma.util.FieldList;
 
+/**
+ * Represents the state of the game.
+ * */
 public class State {
+	/**
+	 * The table.
+	 * */
 	private Table table;
+	
+	/**
+	 * The color of the player whose turn is.
+	 * */
 	private FieldColor color;
 
+	/**
+	 * Constructor.
+	 * @param table The table of the game.
+	 * @param color The color of the player whose turn is.
+	 * */
 	public State(Table table, FieldColor color) {
 		this.table = table;
 		this.color = color;
 	}
 	
+
+	/**
+	 * Constructor.
+	 * @param table The table of the game.
+	 * */
 	public State(Table table) {
 		this.table = table;
 	}
 	
+	/**
+	 * Gets the table.
+	 * @return The table.
+	 * */
 	public Table getTable() {
 		return this.table;
 	}
 	
+	/**
+	 * Gets the color.
+	 * @return The color.
+	 * */
 	public FieldColor getColor() {
 		return color;
 	}
 	
+	/**
+	 * Applies the operator.
+	 * If useable on the table, then use it.
+	 * @param operator The operator.
+	 * */
 	public void applyOperator(Operator operator) {
 		if(operator.isUsableOn(table)) {
 			operator.use(table, color);
@@ -38,14 +72,29 @@ public class State {
 		}
 	}
 	
+	/**
+	 * Gets the field at the position.
+	 * @param position The position.
+	 * @return The field at the position.
+	 * */
 	public Field getFieldAt(Position position) {
 		return table.getFieldAt(position);
 	}
 	
+	/**
+	 * Gets the field at the position(x,y).
+	 * @param x The row.
+	 * @param y The column.
+	 * @return The field at the position(x,y).
+	 * */
 	public Field getFieldAt(int x, int y) {
 		return table.getFieldAt(new Position(x, y));
 	}
 	
+	/**
+	 * Checks if the state is end state.
+	 * @return true if the state is end state.
+	 * */
 	public boolean isEndState() {
 		List<Position> checkedIndexes = new ArrayList<>();
 		FieldColor lastPlayer = (color == FieldColor.BLUE) ? FieldColor.RED : FieldColor.BLUE;
@@ -63,6 +112,11 @@ public class State {
 		return false;
 	}
 	
+	/**
+	 * Checks if the state is end state for the player.
+	 * @param lastPlayer The player.
+	 * @return true if the state is end state.
+	 * */
 	public boolean isEndState(FieldColor lastPlayer) {
 		List<Position> checkedIndexes = new ArrayList<>();
 		boolean hasPath = false;
@@ -79,6 +133,14 @@ public class State {
 		return false;
 	}
 	
+	/**
+	 * Checks if can reach the end from a position(x,y).
+	 * @param x The row.
+	 * @param y The column.
+	 * @param playerColor The color for check.
+	 * @param checkedIndexes The indexes which already checked.
+	 * @return true if can reach the end from the position.
+	 * */
 	private boolean hasPath(int x, int y, FieldColor playerColor, List<Position> checkedIndexes) {
 		
 		//Check for invalid row and column
@@ -122,6 +184,14 @@ public class State {
 				);
 	}
 	
+	/**
+	 * Gets the longest path counter from a position(x,y).
+	 * @param x The row.
+	 * @param y The column.
+	 * @param playerColor The color for check.
+	 * @param checkedIndexes The indexes which already checked.
+	 * @return The longest path counter.
+	 * */
 	public int getLongestPathLength(int x, int y, FieldColor playerColor, List<Position> checkedIndexes) {
 		if(x < 0 || x > App.BOARD_SIZE - 1) {
 			return 0;
@@ -173,10 +243,15 @@ public class State {
 		return 0;
 	}
 	
+	/**
+	 * Gets the longest path length for the color.
+	 * @param playerColor The color for check.
+	 * @return The longest path length for the color.
+	 * */
 	public int getLongestPathLength(FieldColor playerColor) {
 		int longestPathLength = Integer.MIN_VALUE;
-		
-		for(Field field : Cache.withColor(table.getFields(), playerColor)) {
+		FieldList list = new FieldList(table.getFields());
+		for(Field field : list.withColor(playerColor)) {
 			int actualLength = getLongestPathLength(field.getX(), field.getY(), playerColor, new ArrayList<>());
 			if(actualLength > longestPathLength) {
 				longestPathLength = actualLength;
@@ -186,6 +261,11 @@ public class State {
 		return longestPathLength;
 	}
 	
+	/**
+	 * Gets the path length.
+	 * @param playerColor The color of the checked fields.
+	 * @return The sum of the path length.
+	 * */
 	public int getPathLength(FieldColor playerColor) {
 		int sum = 0;
 		for(Field field : table.getFields()) {
@@ -196,23 +276,31 @@ public class State {
 		return sum;
 	}
 	
-	
+	/**
+	 * Clones the state.
+	 * @return Copy of the state.
+	 * */
 	public State clone() {
 		return new State(table.clone(), color);
 	}
 
-	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields) {
-//		List<Field> neighbours = Cache.getNeighbours(field);
-//		for(Field neighbour : neighbours) {
-//			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {
-//				reachableFields.add(neighbour);
-//				getReachableFieldsFrom(neighbour, reachableFields);
-//			}
-//		}
-//		return reachableFields;
-		return getReachableFieldsFrom(field, reachableFields, color);
+	/**
+	 * Gets the reachable fields from a field.
+	 * @param field The field.
+	 * @return The reachable fields from the field.
+	 * */
+	public List<Field> getReachableFieldsFrom(Field field) {
+		return getReachableFieldsFrom(field, new ArrayList<>(), color);
 	}
 
+
+	/**
+	 * Gets the reachable fields from a field.
+	 * @param field The field.
+	 * @param reachableFields The fields already reached.
+	 * @param color The color for check.
+	 * @return The reachable fields from the field.
+	 * */
 	public List<Field> getReachableFieldsFrom(Field field, List<Field> reachableFields, FieldColor color) {
 		for(Field neighbour : Cache.getNeighbours(field)) {
 			if(neighbour.getColor() == color && !reachableFields.contains(neighbour)) {

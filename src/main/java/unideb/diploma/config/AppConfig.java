@@ -24,36 +24,63 @@ import unideb.diploma.strategy.WinningStrategy;
 import unideb.diploma.view.HexView;
 import unideb.diploma.view.HexViewImpl;
 
+/**
+ * Configuration class for the Spring framework.
+ * */
 @Configuration
 @ComponentScan("unideb.diploma.aspect")
 @EnableAspectJAutoProxy
 public class AppConfig {
 
+	/**
+	 * The number of the rounds.
+	 * */
 	private final int NUMBER_OF_ROUNDS = 9;
 	
+	/**
+	 * Singleton bean of HexViewImpl.
+	 * @return The hex view.
+	 * */
 	@Bean
 	public HexView view() {
 		return new HexViewImpl();
 	}
 	
+	/**
+	 * Singleton bean of HexServiceImpl.
+	 * @return The hex service.
+	 * */
 	@Bean
 	public HexService service() {
 		return new HexServiceImpl();
 	}
 	
+	/**
+	 * Blue human player.
+	 * @return The blue human player.
+	 * */
 	@Bean(name="playerOne")
 	public Player blueHumanPlayer() {
 		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.BLUE);
 		return humanPlayer;
 	}
 	
-	
+
+	/**
+	 * Red AI player.
+	 * @return The red AI player.
+	 * */
 	@Bean(name="playerTwo")
 	public Player redAIPlayer() {
 		AIPlayer ai = new AIPlayer("AI player two", FieldColor.RED);
 		return ai;
 	}
 	
+
+	/**
+	 * Blue AI player.
+	 * @return The blue AI player.
+	 * */
 	@Bean(name="playerThree")
 	public Player blueAIPlayer() {
 		AIPlayer ai = new AIPlayer("AI player three", FieldColor.BLUE);
@@ -61,44 +88,97 @@ public class AppConfig {
 		return ai;
 	}
 	
+
+	/**
+	 * Red human player.
+	 * @return The Red human player.
+	 * */
 	@Bean(name="playerFour")
 	public Player redHumanPlayer() {
 		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.RED);
 		return humanPlayer;
 	}
 	
+	/**
+	 * Creates a new bridge strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @return Bridge strategy.
+	 * */
 	public Strategy bridgeStrategy(Player player) {
 		return new BridgeStrategy(player);
 	}
 	
+
+	/**
+	 * Creates a new field connector strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @return Field connector strategy.
+	 * */
 	public Strategy fieldConnectorStrategy(Player player) {
 		return new FieldConnectorStrategy(player);
 	}
 	
+
+	/**
+	 * Creates a new field value strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @return Field value strategy.
+	 * */
 	public Strategy fieldValueStrategy(Player player) {
 		return new FieldValueStrategy(player);
 	}
 	
+
+	/**
+	 * Creates a new random strategy.
+	 * @return Random strategy.
+	 * */
 	public Strategy randomStrategy(){
 		return new RandomStrategy();
 	}
 	
+
+	/**
+	 * Creates a new blocking strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @param depth The maximum allowed steps number.
+	 * @return Blocking strategy.
+	 * */
 	public Strategy blockingStrategy(Player player, int depth) {
 		return new BlockingStrategy(player, depth);
 	}
-	
+
+	/**
+	 * Creates a new winning strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @param depth The maximum allowed steps number.
+	 * @return Winning strategy.
+	 * */
 	public Strategy winningStrategy(Player player, int depth) {
 		return new WinningStrategy(player, depth);
 	}
 	
+	/**
+	 * Creates a new path blocking strategy for the player.
+	 * @param player The player who has the strategy.
+	 * @return Path blocking strategy.
+	 * */
 	public Strategy pathBlockingStrategy(Player player) {
 		return new PathBlockingStrategy(player);
 	}
 	
+	/**
+	 * Sets an AI player strategies.
+	 * @param player The AI player.
+	 * @param strategies The strategies.
+	 * */
 	private void setAiPlayerStrategies(Player player, Strategy[] strategies) {
 		player.setStrategies(strategies);
 	}
 	
+	/**
+	 * Sets the AI players strategies.
+	 * */
 	private void setAiPlayersStrategies() {
 		setAiPlayerStrategies(redAIPlayer(), new Strategy[] {
 				bridgeStrategy(redAIPlayer()),
@@ -120,7 +200,10 @@ public class AppConfig {
 				});
 	}
 	
-	
+	/**
+	 * Singleton bean of App.
+	 * @return The app.
+	 * */
 	@Bean
 	public App app() {
 		Cache.registerPlayer(blueHumanPlayer());

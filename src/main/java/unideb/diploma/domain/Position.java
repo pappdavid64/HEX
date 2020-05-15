@@ -1,23 +1,50 @@
 package unideb.diploma.domain;
 
+/**
+ * Position.
+ * */
 public class Position {
+	/**
+	 * The row.
+	 * */
 	private final int x;
+	
+	/**
+	 * The column.
+	 * */
 	private final int y;
 	
+	/**
+	 * Constructor.
+	 * @param x The row.
+	 * @param y The column.
+	 * */
 	public Position(int x, int y) {
 		super();
 		this.x = x;
 		this.y = y;
 	}
 
+	/**
+	 * Gets the x.
+	 * @return x.
+	 * */
 	public int getX() {
 		return x;
 	}
 
+	/**
+	 * Gets the y.
+	 * @return y.
+	 * */
 	public int getY() {
 		return y;
 	}
 
+	/**
+	 * Cloning the position.
+	 * @return Copy of the position.
+	 * */
 	public Position clone() {
 		return new Position(x, y);
 	}

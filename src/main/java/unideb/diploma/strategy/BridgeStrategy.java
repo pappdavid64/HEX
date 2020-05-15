@@ -16,19 +16,50 @@ import unideb.diploma.observer.Observable;
 import unideb.diploma.observer.Observer;
 import unideb.diploma.strategy.strength.StrategyStrength;
 
+/**
+ * Strategy which tries to create a bridge between the two sides.
+ * */
 public class BridgeStrategy implements Strategy, Observer {
 
+	/**
+	 * The base of the strategy.
+	 * */
 	private Field base;
+	
+	/**
+	 * The player whom want to win.
+	 * */
 	private Player player;
+	
+	/**
+	 * The base selector.
+	 * */
 	private BaseSelector baseSelector;
+
+	/**
+	 * Indicates if the base changed.
+	 * */
 	private boolean baseChanged;
+	
+	/**
+	 * Direction where the opponent make his the last move.
+	 * */
 	private Direction direction;
 
+	/**
+	 * Constructor.
+	 * @param player The player whom want to win.
+	 * */
 	public BridgeStrategy(Player player) {
 		this.player = player;
 		baseSelector = new BaseSelector(player, this);
 	}
 
+	/**
+	 * Gets the next move by the state.
+	 * @param state The state of the game.
+	 * @return The operator which will be used.
+	 * */
 	@Override
 	public Operator getNextMove(State state) {
 		Field selectedField = null;
@@ -61,6 +92,13 @@ public class BridgeStrategy implements Strategy, Observer {
 		return Cache.getOperatorAt(selectedField.getPosition());
 	}
 
+	/**
+	 * Selects a field.
+	 * @param state The state of the game.
+	 * @param actual The actual field from where to choose.
+	 * @param direction The direction where want to choose.
+	 * @return The selected field.
+	 * */
 	private Field selectField(State state, Field actual, Direction direction) {
 		List<Field> firstLevelNeighbours = new ArrayList<>();
 		List<Field> secondLevelNeighbours = new ArrayList<>();
@@ -88,6 +126,12 @@ public class BridgeStrategy implements Strategy, Observer {
 		return selected;
 	}
 
+	/**
+	 * Checks if the bridge is built in the direction.
+	 * @param field The field which checks if its at the edge.
+	 * @param direction The direction where checks.
+	 * @return true if the bridge is built in the direction.
+	 * */
 	private boolean bridgeIsBuiltInDirection(Field field, Direction direction) {
 
 		if (player.getColor() == FieldColor.RED) {
@@ -104,13 +148,17 @@ public class BridgeStrategy implements Strategy, Observer {
 			}
 		}
 
-		for (Field actual : Cache.withColor(Cache.getNeighboursOfLevelByDirection(direction, field, 1),
-				player.getColor())) {
+		for (Field actual : Cache.getNeighboursOfDistanceByDirection(direction, field, 1).withColor(player.getColor())) {
 			return bridgeIsBuiltInDirection(actual, direction);
 		}
 		return false;
 	}
 
+	/**
+	 * Gets a field with the color of the player from the list in the direction.
+	 * @param fields The list of fields which choose.
+	 * @return The chosen field.
+	 * */
 	private Field getPlayersFieldFromList(List<Field> fields, Direction direction) {
 		List<Field> actualFields = new ArrayList<>();
 		for (Field field : fields) {
@@ -133,6 +181,14 @@ public class BridgeStrategy implements Strategy, Observer {
 		return selected;
 	}
 
+	/**
+	 * Select a field from the list with the minimum appearance.
+	 * @param actualField
+	 * @param direction
+	 * @param fields The fields from choose.
+	 * @param minimum The minimum number of appearance int he list.
+	 * @return The field selected.
+	 * */
 	private Field selectFieldFromList(Field actualField, Direction direction, List<Field> fields, int minimum) {
 		Field selected = null;
 		List<Field> fieldsWithMinimum = new ArrayList<>();
@@ -159,47 +215,25 @@ public class BridgeStrategy implements Strategy, Observer {
 		return selected;
 	}
 
-	private boolean distanceIs(Field field, Field actualField, int distance) {
+	/**
+	 * Checks if the distance between two field is the distance given in the parameters.
+	 * @param a Field one.
+	 * @param b Field two.
+	 * @param distance The distance for check between the two field.
+	 * @return true 
+	 * */
+	private boolean distanceIs(Field a, Field b, int distance) {
 		if (player.getColor() == FieldColor.BLUE) {
-			if (Math.abs(field.getY() - actualField.getY()) == distance) {
+			if (Math.abs(a.getY() - b.getY()) == distance) {
 				return true;
 			}
 		}
 		if (player.getColor() == FieldColor.RED) {
-			if (Math.abs(field.getX() - actualField.getX()) == distance) {
+			if (Math.abs(a.getX() - b.getX()) == distance) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	private int getFirstOpponentFieldDistance(Field field, Direction direction){
-		List<Field> neighbours = Cache.getNeighboursByDirection(direction, field).getFields();
-		for(;;){
-			List<Field> nextNeighbours = new ArrayList<>();
-			for(Field neighbour : neighbours){
-				int distance = checkForOpponentField(neighbour, direction);
-				if(distance != -1){
-					return distance;
-				}
-				nextNeighbours.addAll(Cache.getNeighboursByDirection(direction, neighbour).getFields());
-			}
-			neighbours = nextNeighbours;
-			if(neighbours.isEmpty()){
-				break;
-			}
-		}
-
-		return Integer.MIN_VALUE;
-	}
-
-	private int checkForOpponentField(Field field, Direction direction){
-		for(Field neighbour : Cache.getNeighboursByDirection(direction, field)){
-			if(neighbour.getColor() == player.getOpponentColor()){
-				return Math.abs(field.getX() - neighbour.getX());
-			}
-		}
-		return -1;
 	}
 
 	private int getReachableEndFields(Field field, Direction direction) {
@@ -220,6 +254,12 @@ public class BridgeStrategy implements Strategy, Observer {
 		return sum;
 	}
 
+	/**
+	 * Gets the appearance of a field in the list.
+	 * @param fields The list of fields.
+	 * @param field The searched field.
+	 * @return The number of the field appeared in the list.
+	 * */
 	private int getFieldAppearances(List<Field> fields, Field field) {
 		int counter = 0;
 		for (Field actField : fields) {
@@ -230,6 +270,11 @@ public class BridgeStrategy implements Strategy, Observer {
 		return counter;
 	}
 
+	/**
+	 * Gets the goodness of the strategy by the state.
+	 * @param state The state of the game.
+	 * @return The strength of the strategy by the state.
+	 * */
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		if (base == null) {
@@ -247,11 +292,19 @@ public class BridgeStrategy implements Strategy, Observer {
 		}
 	}
 
+	/**
+	 * Recalculating the base.
+	 * @param state The state of the game.
+	 * */
 	public void reCalculateBase(State state) {
-		base = baseSelector.selectBaseFromWhiteFields(state).getBase();
+		base = baseSelector.selectBaseByFieldValue(state).getBase();
 		baseChanged = true;
 	}
 
+	/**
+	 * If the opponent makes a move, the strategy is notified.
+	 * @param observable The field.
+	 * */
 	@Override
 	public void notify(Observable observable) {
 		Field field = (Field) observable;
