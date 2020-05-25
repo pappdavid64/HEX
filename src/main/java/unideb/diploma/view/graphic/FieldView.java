@@ -50,6 +50,7 @@ public class FieldView extends Polygon implements Observer {
 	
 	/**
 	 * Gets the height of a FieldView.
+	 * @param size The size of the field.
 	 * @return the height of a FieldView.
 	 * */
 	public static double getHeight(double size){
@@ -59,6 +60,7 @@ public class FieldView extends Polygon implements Observer {
 
 	/**
 	 * Gets the width of a FieldView.
+	 * @param size The size of the field.
 	 * @return the width of a FieldView.
 	 * */
 	public static double getWidth(double size){
@@ -68,6 +70,7 @@ public class FieldView extends Polygon implements Observer {
 	/**
 	 * The FieldView observs the field.
 	 * Whenever the color of the field is set, its notifying the FieldView.
+	 * @param observable The field.
 	 * */
 	@Override
 	public void notify(Observable observable) {

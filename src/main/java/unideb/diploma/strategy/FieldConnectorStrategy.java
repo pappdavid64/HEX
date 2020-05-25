@@ -129,9 +129,7 @@ public class FieldConnectorStrategy implements Strategy {
 		List<Field> reachableFields = new ArrayList<>();
 		Field field = connection.getConnections().get(0);
 		for(Field actual : Cache.getNeighbours(field).withColor(player.getColor())) {
-			System.out.println("actual field: " + actual);
 			reachableFields = state.getReachableFieldsFrom(actual);
-			System.out.println("reachable fields: " + reachableFields);
 			for(Field reachableField : reachableFields) {
 				VirtualConnection con =  Cache.getConnectionFromField(player, reachableField);
 				if(con != null) {

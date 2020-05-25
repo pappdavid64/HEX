@@ -103,20 +103,21 @@ public class FieldValueStrategy implements Strategy, Observer {
 	public void notify(Observable observable) {
 		Field field = (Field)observable;
 		if(field.getColor() == player.getColor()) {
-			setFieldValue(field, field, new ArrayList<>(), 1);
+			setFieldValue(field, field, 0, 2, 2);
 		} else {
-			setFieldValue(field, field, new ArrayList<>(), -1);
+			setFieldValue(field, field, 5, 2, 2);
 		}
 	}
 	
-	private void setFieldValue(Field base, Field field, List<Field> alreadyWas, int plus) {
-		fieldsAndValues.put(field, fieldsAndValues.get(field) + plus);
-		alreadyWas.add(field);
+	private void setFieldValue(Field base, Field field, int plus, int actualLimit, int startingLimit) {
+		if(actualLimit < 0) {
+			return;
+		}
+		if(actualLimit != startingLimit - 1)
+			fieldsAndValues.put(field, fieldsAndValues.get(field) + plus * (actualLimit +1) );
 		List<Field> neighbours = Cache.getNeighbours(field).withColor(FieldColor.WHITE);
 		for(Field neighbour : neighbours) {
-			if(!alreadyWas.contains(neighbour)) {
-				setFieldValue(base, neighbour, alreadyWas, plus + (1 * plus) );
-			}
+			setFieldValue(base, neighbour, plus, actualLimit - 1, startingLimit);
 		}
 	}
 	
