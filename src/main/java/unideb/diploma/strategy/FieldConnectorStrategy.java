@@ -11,9 +11,9 @@ import unideb.diploma.domain.Position;
 import unideb.diploma.game.Operator;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
-import unideb.diploma.strategy.connection.ConnectionUtil;
 import unideb.diploma.strategy.connection.VirtualConnection;
 import unideb.diploma.strategy.strength.StrategyStrength;
+import unideb.diploma.util.ConnectionUtil;
 
 /**
  * Strategy which connects the player's fields. 

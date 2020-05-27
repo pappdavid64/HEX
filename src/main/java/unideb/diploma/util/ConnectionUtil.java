@@ -1,4 +1,4 @@
-package unideb.diploma.strategy.connection;
+package unideb.diploma.util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +10,7 @@ import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
+import unideb.diploma.strategy.connection.VirtualConnection;
 
 /**
  * Utility class for making checks for a virtual connection.

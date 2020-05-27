@@ -35,7 +35,7 @@ public class AppConfig {
 	/**
 	 * The number of the rounds.
 	 * */
-	private final int NUMBER_OF_ROUNDS = 9;
+	private final int NUMBER_OF_ROUNDS = 1;
 	
 	/**
 	 * Singleton bean of HexViewImpl.

@@ -78,7 +78,7 @@ public class BridgeStrategy implements Strategy, Observer {
 			if (!bridgeIsBuiltInDirection(base, direction)) {
 				Field actual = base;
 				while (selectedField == null && actual != null && actual.getColor() == player.getColor()) {
-					actual = selectField(state, actual, direction);
+					actual = selectFieldByStateAndDirection(state, actual, direction);
 				}
 				if (selectedField != base && actual != base) {
 					selectedField = actual;
@@ -99,7 +99,7 @@ public class BridgeStrategy implements Strategy, Observer {
 	 * @param direction The direction where want to choose.
 	 * @return The selected field.
 	 * */
-	private Field selectField(State state, Field actual, Direction direction) {
+	private Field selectFieldByStateAndDirection(State state, Field actual, Direction direction) {
 		List<Field> firstLevelNeighbours = new ArrayList<>();
 		List<Field> secondLevelNeighbours = new ArrayList<>();
 		Field selected;
@@ -186,7 +186,7 @@ public class BridgeStrategy implements Strategy, Observer {
 	 * @param actualField
 	 * @param direction
 	 * @param fields The fields from choose.
-	 * @param minimum The minimum number of appearance int he list.
+	 * @param minimum The minimum number of appearance in the list.
 	 * @return The field selected.
 	 * */
 	private Field selectFieldFromList(Field actualField, Direction direction, List<Field> fields, int minimum) {
