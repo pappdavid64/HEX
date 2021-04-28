@@ -1,4 +1,4 @@
-package unideb.diploma.util;
+package unideb.diploma.strategy.connection;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,7 +10,6 @@ import unideb.diploma.cache.Cache;
 import unideb.diploma.domain.Field;
 import unideb.diploma.game.State;
 import unideb.diploma.logic.Player;
-import unideb.diploma.strategy.connection.VirtualConnection;
 
 /**
  * Utility class for making checks for a virtual connection.
@@ -22,7 +21,7 @@ public class ConnectionUtil {
 	 * @param connection The virtual connection under check.
 	 * @param player The player whose connection is checked.
 	 * @param state The state of the game.
-	 * @return true if it is the only one connection.
+	 * @return true if it is the only one conenction.
 	 * */
 	public static boolean isTheOnlyOneConnection(VirtualConnection connection, Player player, State state) {
 		List<VirtualConnection> connections = getVirtualConnectionsBetween(connection.getA(), connection.getB(), player, state);

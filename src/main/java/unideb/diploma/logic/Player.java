@@ -66,4 +66,6 @@ public interface Player {
 	 * @param strategies The strategies.
 	 * */
 	void setStrategies(Strategy[] strategies);
+
+	void init();
 }

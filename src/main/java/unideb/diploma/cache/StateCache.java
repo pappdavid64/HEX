@@ -92,6 +92,8 @@ public class StateCache {
 				fields.add(field);
 			}
 		}
+		State statee = new State(new Table(fields), FieldColor.BLUE);
+		System.out.println(statee);
 		return new State(new Table(fields), FieldColor.BLUE);
 	}
 }

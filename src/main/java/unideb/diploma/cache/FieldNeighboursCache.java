@@ -66,7 +66,11 @@ public class FieldNeighboursCache {
 	static List<FieldNeighboursCache> getFieldsNeighbours(){
 		return fieldsNeighbours;
 	}
-	
+
+	static void reset(){
+		fieldsNeighbours = generateFieldsNeighbours();
+	}
+
 	/**
 	 * Generating all of the fields neighbours cache.
 	 * @return The fields neighbour cache for all field.

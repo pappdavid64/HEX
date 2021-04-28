@@ -51,6 +51,10 @@ public class BaseSelector {
 		this.fieldValueStrategy = new FieldValueStrategy(player);
 	}
 
+	public void init(){
+		this.fieldValueStrategy = new FieldValueStrategy(this.player);
+	}
+
 	/**
 	 * Selects the base by values of the field.
 	 * */
@@ -97,6 +101,7 @@ public class BaseSelector {
 		List<Operator> operators = Cache.getUseableOperators();
 		Operator random = operators.get(new Random().nextInt(operators.size()));
 		base = state.getFieldAt(random.getPosition());
+		addObserverToFields(getReachableFieldsFromField(base, new ArrayList<>()));
 		return this;
 	}
 

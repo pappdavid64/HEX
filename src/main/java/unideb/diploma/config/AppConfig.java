@@ -21,6 +21,7 @@ import unideb.diploma.strategy.PathBlockingStrategy;
 import unideb.diploma.strategy.RandomStrategy;
 import unideb.diploma.strategy.Strategy;
 import unideb.diploma.strategy.WinningStrategy;
+import unideb.diploma.strategy.minimax.Minimax;
 import unideb.diploma.view.HexView;
 import unideb.diploma.view.HexViewImpl;
 
@@ -35,7 +36,7 @@ public class AppConfig {
 	/**
 	 * The number of the rounds.
 	 * */
-	private final int NUMBER_OF_ROUNDS = 1;
+	private final int NUMBER_OF_ROUNDS = 101;
 	
 	/**
 	 * Singleton bean of HexViewImpl.
@@ -61,7 +62,7 @@ public class AppConfig {
 	 * */
 	@Bean(name="playerOne")
 	public Player blueHumanPlayer() {
-		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.BLUE);
+		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Blue Human player", FieldColor.BLUE);
 		return humanPlayer;
 	}
 	
@@ -72,7 +73,7 @@ public class AppConfig {
 	 * */
 	@Bean(name="playerTwo")
 	public Player redAIPlayer() {
-		AIPlayer ai = new AIPlayer("AI player two", FieldColor.RED);
+		AIPlayer ai = new AIPlayer("Red AI player", FieldColor.RED);
 		return ai;
 	}
 	
@@ -83,8 +84,8 @@ public class AppConfig {
 	 * */
 	@Bean(name="playerThree")
 	public Player blueAIPlayer() {
-		AIPlayer ai = new AIPlayer("AI player three", FieldColor.BLUE);
-		ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
+		AIPlayer ai = new AIPlayer("Blue AI player ", FieldColor.BLUE);
+		//ai.setStrategies(new Strategy[] {bridgeStrategy(ai), fieldConnectorStrategy(ai), randomStrategy(), blockingStrategy(ai,2), winningStrategy(ai,2)});
 		return ai;
 	}
 	
@@ -95,7 +96,7 @@ public class AppConfig {
 	 * */
 	@Bean(name="playerFour")
 	public Player redHumanPlayer() {
-		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Human player", FieldColor.RED);
+		SimpleHumanPlayer humanPlayer = new SimpleHumanPlayer("Red Human player", FieldColor.RED);
 		return humanPlayer;
 	}
 	
@@ -167,6 +168,10 @@ public class AppConfig {
 		return new PathBlockingStrategy(player);
 	}
 	
+	public Strategy minimaxStrategy(Player player, int depth) {
+		return new Minimax(depth, player);
+	}
+	
 	/**
 	 * Sets an AI player strategies.
 	 * @param player The AI player.
@@ -186,7 +191,7 @@ public class AppConfig {
 				fieldValueStrategy(redAIPlayer()),
 				randomStrategy(),
 				blockingStrategy(redAIPlayer(), 2),
-				winningStrategy(redAIPlayer(),2),
+				winningStrategy(redAIPlayer(), 0),
 				pathBlockingStrategy(redAIPlayer())
 				});
 		setAiPlayerStrategies(blueAIPlayer(), new Strategy[] {
@@ -198,6 +203,24 @@ public class AppConfig {
 				winningStrategy(blueAIPlayer(),2),
 				pathBlockingStrategy(blueAIPlayer())
 				});
+		setAiPlayerStrategies(blueMinimaxPlayer(), new Strategy[] {
+				minimaxStrategy(blueMinimaxPlayer(), 3)
+		});
+		setAiPlayerStrategies(redMinimaxPlayer(), new Strategy[] {
+				minimaxStrategy(redMinimaxPlayer(), 3)
+		});
+	}
+	
+	@Bean("blueMinimaxPlayer")
+	public Player blueMinimaxPlayer() {
+		AIPlayer ai = new AIPlayer("Blue Minimax AI Player", FieldColor.BLUE);
+		return ai;
+	}
+
+	@Bean("redMinimaxPlayer")
+	public Player redMinimaxPlayer() {
+		AIPlayer ai = new AIPlayer("Red Minimax AI Player", FieldColor.RED);
+		return ai;
 	}
 	
 	/**
@@ -210,7 +233,9 @@ public class AppConfig {
 		Cache.registerPlayer(redAIPlayer());
 		Cache.registerPlayer(blueAIPlayer());
 		Cache.registerPlayer(redHumanPlayer());
-		App app = new App(service(), view(), blueHumanPlayer(), redAIPlayer(), NUMBER_OF_ROUNDS);
+		Cache.registerPlayer(blueMinimaxPlayer());
+		Cache.registerPlayer(redMinimaxPlayer());
+		App app = new App(service(), view(), blueHumanPlayer(), redHumanPlayer(), NUMBER_OF_ROUNDS);
 		setAiPlayersStrategies();
 		return app;
 	}

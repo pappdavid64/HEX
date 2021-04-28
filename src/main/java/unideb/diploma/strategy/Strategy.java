@@ -22,4 +22,6 @@ public interface Strategy {
 	 * @return The strength of the strategy by the state.
 	 * */
 	StrategyStrength getGoodnessByState(State state);
+
+	void init();
 }

@@ -70,7 +70,6 @@ public class App{
     	statistic = new GameStatistic();
     	statistic.savePlayer(playerOne);
     	statistic.savePlayer(playerTwo);
-    	state = Cache.getState();
     	this.playerOne.setOpponent(playerTwo);
     	this.playerTwo.setOpponent(playerOne);
     }
@@ -81,6 +80,7 @@ public class App{
     @ExecutionTime
     public void playGame() {
     	for(int i = 0; i < numberOfMatches; i++) {
+			System.out.println("Round #" + (i + 1) );
     		playOneMatch();    		
     	}
     	statistic.printStatistics();
@@ -129,8 +129,10 @@ public class App{
      * Reseting the game after someone won.
      * */
     private void resetGame() {
-    	sleep(3000);
+    	//sleep(3000);
     	Cache.reset();
+    	this.playerOne.init();
+    	this.playerTwo.init();
     	SpringApp.initStage();
     }
     

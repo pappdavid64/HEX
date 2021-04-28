@@ -26,6 +26,10 @@ public class BlockingStrategy extends GameEndingStrategy {
 		super(player.getOpponent(), depth);
 	}
 
+	@Override
+	public void init(){
+
+	}
 	/**
 	 * Selects a field from the list of used operators.
 	 * @param state The state of the game.

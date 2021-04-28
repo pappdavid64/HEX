@@ -48,6 +48,11 @@ public abstract class GameEndingStrategy implements Strategy {
 		this.depth = depth;
 	}
 
+	@Override
+	public void init(){
+
+	}
+
 	/**
 	 * Gets the next move by the state.
 	 * @param state The state of the game.

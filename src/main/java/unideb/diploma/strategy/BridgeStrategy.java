@@ -55,6 +55,14 @@ public class BridgeStrategy implements Strategy, Observer {
 		baseSelector = new BaseSelector(player, this);
 	}
 
+	@Override
+	public void init(){
+		this.base = null;
+		this.baseChanged = false;
+		this.direction = null;
+		this.baseSelector.init();
+	}
+
 	/**
 	 * Gets the next move by the state.
 	 * @param state The state of the game.
@@ -122,7 +130,6 @@ public class BridgeStrategy implements Strategy, Observer {
 		if (selected == null) {
 			selected = selectFieldFromList(actual, direction, firstLevelNeighbours, 1);
 		}
-
 		return selected;
 	}
 
@@ -278,15 +285,15 @@ public class BridgeStrategy implements Strategy, Observer {
 	@Override
 	public StrategyStrength getGoodnessByState(State state) {
 		if (base == null) {
-	//		base = baseSelector.selectBaseFromWhiteFields(state).getBase();
-			base = baseSelector.selectBaseByFieldValue(state).getBase();
+			//base = baseSelector.selectBaseByFieldValue(state).getBase();
+            base = baseSelector.selectBaseByRandom(state).getBase();
 			baseChanged = true;
 		}
 		if (baseSelector.canReachTheEndFromBase(state)) {
 			return StrategyStrength.medium(3);
 		} else {
-	//		base = baseSelector.selectBaseFromWhiteFields(state).getBase();
-			base = baseSelector.selectBaseByFieldValue(state).getBase();
+			//base = baseSelector.selectBaseByFieldValue(state).getBase();
+            base = baseSelector.selectBaseByRandom(state).getBase();
 			baseChanged = true;
 			return StrategyStrength.veryWeak(0);
 		}
@@ -297,7 +304,8 @@ public class BridgeStrategy implements Strategy, Observer {
 	 * @param state The state of the game.
 	 * */
 	public void reCalculateBase(State state) {
-		base = baseSelector.selectBaseByFieldValue(state).getBase();
+		//base = baseSelector.selectBaseByFieldValue(state).getBase();
+        base = baseSelector.selectBaseByRandom(state).getBase();
 		baseChanged = true;
 	}
 
@@ -307,22 +315,24 @@ public class BridgeStrategy implements Strategy, Observer {
 	 * */
 	@Override
 	public void notify(Observable observable) {
-		Field field = (Field) observable;
-		direction = null;
-		if (player.getColor() == FieldColor.BLUE) {
-			if (field.getY() > base.getY()) {
-				direction = Direction.WEST;
+		if(base != null) {
+			Field field = (Field) observable;
+			direction = null;
+			if (player.getColor() == FieldColor.BLUE) {
+				if (field.getY() > base.getY()) {
+					direction = Direction.WEST;
+				}
+				if (field.getY() < base.getY()) {
+					direction = Direction.EAST;
+				}
 			}
-			if (field.getY() < base.getY()) {
-				direction = Direction.EAST;
-			}
-		}
-		if (player.getColor() == FieldColor.RED) {
-			if (field.getX() > base.getX()) {
-				direction = Direction.SOUTH;
-			}
-			if (field.getX() < base.getX()) {
-				direction = Direction.NORTH;
+			if (player.getColor() == FieldColor.RED) {
+				if (field.getX() > base.getX()) {
+					direction = Direction.SOUTH;
+				}
+				if (field.getX() < base.getX()) {
+					direction = Direction.NORTH;
+				}
 			}
 		}
 	}

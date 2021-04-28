@@ -51,7 +51,6 @@ public class AIPlayer extends PlayerWithNameAndColor {
 			}
 		}
 
-		System.out.println(strategy.getClass());
 		return nextMove;
 	}
 	
@@ -80,5 +79,11 @@ public class AIPlayer extends PlayerWithNameAndColor {
 	public void setStrategies(Strategy[] strategies) {
 		this.strategies = strategies;
 	}
-	
+
+	@Override
+	public void init(){
+		for(Strategy strategy : strategies){
+			strategy.init();
+		}
+	}
 }

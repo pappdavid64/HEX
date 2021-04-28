@@ -20,22 +20,22 @@ public class Cache {
 	/**
 	 * Cache for operators.
 	 * */
-	private static final OperatorCache operatorCache;
+	private static OperatorCache operatorCache;
 	
 	/**
 	 * Cache for states.
 	 * */
-	private static final StateCache stateCache;
+	private static StateCache stateCache;
 	
 	/**
 	 * Cache for virtual connections.
 	 * */
-	private static final VirtualConnectionCache virtualConnnectionCache;
+	private static VirtualConnectionCache virtualConnnectionCache;
 	
 	/**
 	 * Cache for fields neighbours.
 	 * */
-	private static final List<FieldNeighboursCache> fieldsNeighbours;
+	private static List<FieldNeighboursCache> fieldsNeighbours;
 
 	static {
 		operatorCache = new OperatorCache();
@@ -51,6 +51,8 @@ public class Cache {
 		operatorCache.fillUseableOperators();
 		stateCache.resetState();
 		virtualConnnectionCache.reset();
+        FieldNeighboursCache.reset();
+        fieldsNeighbours = FieldNeighboursCache.getFieldsNeighbours();
 	}
 
 	/**

@@ -63,5 +63,10 @@ public class SimpleHumanPlayer extends PlayerWithNameAndColor{
 	public void setStrategies(Strategy[] strategies) {
 
 	}
+
+	@Override
+	public void init(){
+
+	}
 	
 }

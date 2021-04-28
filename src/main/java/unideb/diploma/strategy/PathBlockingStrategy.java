@@ -38,7 +38,12 @@ public class PathBlockingStrategy implements Strategy {
 	public PathBlockingStrategy(Player player) {
 		this.player = player;
 	}
-	
+
+	@Override
+	public void init(){
+
+	}
+
 	/**
 	 * Gets the next move by the state.
 	 * @param state The state of the game.

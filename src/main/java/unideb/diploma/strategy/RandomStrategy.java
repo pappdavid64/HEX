@@ -24,6 +24,11 @@ public class RandomStrategy implements Strategy {
 		return Cache.getOperatorAt(random.nextInt(App.BOARD_SIZE), random.nextInt(App.BOARD_SIZE));
 	}
 
+	@Override
+	public void init(){
+
+	}
+
 	/**
 	 * Gets the goodness of the strategy by the state.
 	 * @param state The state of the game.

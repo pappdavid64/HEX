@@ -16,6 +16,9 @@ import unideb.diploma.domain.Position;
 import unideb.diploma.game.Operator;
 import unideb.diploma.logic.Player;
 import unideb.diploma.strategy.connection.VirtualConnection;
+import unideb.diploma.util.FieldList;
+
+import java.util.List;
 
 /**
  * Aspect for the virtual connections.

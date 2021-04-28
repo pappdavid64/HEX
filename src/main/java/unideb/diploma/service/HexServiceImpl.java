@@ -24,7 +24,7 @@ public class HexServiceImpl implements HexService {
 	@ExecutionTime
 	@Log
 	public Operator getNextMoveFrom(Player player, State state) {
-		System.out.println("Player: " + player.getName() + "'s turn.");
+		//System.out.println("Player: " + player.getName() + "'s turn.");
 		Operator nextMove;
 		while( (nextMove = player.getNextMove(state)) == null) {
 			

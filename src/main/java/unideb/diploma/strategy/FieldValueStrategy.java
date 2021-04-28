@@ -36,6 +36,11 @@ public class FieldValueStrategy implements Strategy, Observer {
 		fieldsAndValues = getBaseValues();
 	}
 
+	@Override
+	public void init(){
+		this.fieldsAndValues = getBaseValues();
+	}
+
 	/**
 	 * Initialize the base values.
 	 * @return The map of fields with their base values.
@@ -91,7 +96,6 @@ public class FieldValueStrategy implements Strategy, Observer {
 			}
 		}
 		Random rand = new Random();
-		System.out.println(bestValuedFields);
 		return bestValuedFields.get(rand.nextInt(bestValuedFields.size()));
 	}
 
@@ -103,9 +107,9 @@ public class FieldValueStrategy implements Strategy, Observer {
 	public void notify(Observable observable) {
 		Field field = (Field)observable;
 		if(field.getColor() == player.getColor()) {
-			setFieldValue(field, field, 0, 2, 2);
-		} else {
 			setFieldValue(field, field, 5, 2, 2);
+		} else {
+			setFieldValue(field, field, 2, 2, 2);
 		}
 	}
 	

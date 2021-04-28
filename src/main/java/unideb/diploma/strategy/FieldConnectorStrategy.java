@@ -42,7 +42,12 @@ public class FieldConnectorStrategy implements Strategy {
 	public FieldConnectorStrategy(Player player) {
 		this.player = player;
 	}
-	
+
+	@Override
+	public void init(){
+
+	}
+
 	/**
 	 * Gets the next move by the state.
 	 * @param state The state of the game.
@@ -88,12 +93,15 @@ public class FieldConnectorStrategy implements Strategy {
 			if(connection.getConnectionsCount() == 1 && (ConnectionUtil.isTheOnlyOneConnection(connection, player, state) && !canReachAnotherFieldIntheLineFromVirtualConnection(state, connection))) {
 				Position position = connection.getConnections().get(0).getPosition();
 				State actualState = state.clone();
-				Cache.getOperatorAt(position).use(actualState.getTable(), player.getColor());
-				actualLenght = actualState.getPathLength(player.getColor());
-				if(actualLenght > longestWayLength) {
-					longestWayLength = actualLenght;
-					nextMove = Cache.getOperatorAt(position);
-					return true;
+				Operator operator = Cache.getOperatorAt(position);
+				if(operator != null) {
+					operator.use(actualState.getTable(), player.getColor());
+					actualLenght = actualState.getPathLength(player.getColor());
+					if (actualLenght > longestWayLength) {
+						longestWayLength = actualLenght;
+						nextMove = Cache.getOperatorAt(position);
+						return true;
+					}
 				}
 			}
 		}
@@ -111,9 +119,11 @@ public class FieldConnectorStrategy implements Strategy {
 		for(VirtualConnection connection : connections) {
 			Field field = connection.getConnections().get(0);
 			Operator operator = Cache.getOperatorAt(field.getPosition());
-			operator.use(state.getTable(),player.getColor());
-			if(state.isEndState(player.getColor())) {
-				return true;
+			if(operator != null) {
+				operator.use(state.getTable(), player.getColor());
+				if (state.isEndState(player.getColor())) {
+					return true;
+				}
 			}
 		}
 		return false;
